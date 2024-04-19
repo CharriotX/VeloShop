@@ -1,0 +1,19 @@
+.SubcategoriesList{
+    margin-top: 100px;
+    display: grid;
+    grid-template-columns: repeat(2,50%);
+}
+
+.SubcategoryItem {
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    margin: 2px;
+    align-items: center;
+    border: 1px solid #f8f2f2;
+}
+
+.SubcategoryItem:hover {
+    border: 1px solid #4800ff;
+    background: white;
+}

@@ -1,0 +1,18 @@
+.Item {
+    height: 150px;
+    border: 1px solid #f8f2f2;
+    margin: 2px;
+    padding: 5px;
+}
+
+.SubcategoryList{
+    margin-top: 10px;  
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.SubcategoryItem {
+    margin: 5px;
+    font-size: 14px;
+    color: blueviolet;
+}

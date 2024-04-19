@@ -1,0 +1,6 @@
+@ReactVeloShop.Server_HostAddress = http://localhost:5233
+
+GET {{ReactVeloShop.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

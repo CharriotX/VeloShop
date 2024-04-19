@@ -1,0 +1,35 @@
+.navbar {
+    margin: 0 auto;
+    background: blueviolet;
+    color: white;
+}
+
+.navbarContainer{
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.navbarHeader {
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbarHeader a{
+    color:white;
+}
+
+
+
+.navbarLinks {
+    height: 40px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+    .navbarLinks a {
+        text-decoration: none;
+        color: white;
+    }
