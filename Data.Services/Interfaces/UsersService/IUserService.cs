@@ -6,10 +6,6 @@ namespace Data.Services.Interfaces.UsersService
 {
     public interface IUserService
     {
-        UserDataWithTokens Register(string username, string email, string password);
-        UserDataWithTokens Register(string username, string email, string password, SiteRole role);
-        GeneretedTokensWithUserData Login(string email, string password);
         CurrentUserData GetUserById(int id);
-        GeneretedTokensData GetToken(int userId);
     }
 }

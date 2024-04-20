@@ -30,7 +30,6 @@ namespace ReactVeloShop.Server.Controllers.Api
         [Route("register")]
         public async Task<IActionResult> Register(RegisterUserData data)
         {
-            
             return Ok();
         }
 

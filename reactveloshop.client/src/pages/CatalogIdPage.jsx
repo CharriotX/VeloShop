@@ -4,10 +4,10 @@ import { useFetching } from '../hooks/useFetching';
 import CategoryService from '../services/CategoryService';
 import { useEffect } from 'react';
 import CategoryItem from '../components/CategoryItem';
-import SubcategoriesList from '../components/SubcategoriesList';
+import SubcategoryItem from '../components/SubcategoryItem';
 
 function CatalogIdPage() {
-    const {id} = useParams();
+    const { id } = useParams();
     const [category, setCategory] = useState({});
     const [subcategories, setSubcategories] = useState([])
 
@@ -21,13 +21,19 @@ function CatalogIdPage() {
         fetchCategory(id)
     }, [id])
 
-    console.log(category)
     console.log(subcategories)
 
     return (
         <>
             <h2 >{category.name}</h2>
-            <SubcategoriesList subcategories={subcategories}></SubcategoriesList>
+            {isLoading
+                ? <div>Loading</div>
+                : <div>
+                    {subcategories.map(sub =>
+                        <SubcategoryItem key={sub.id} sub={sub}></SubcategoryItem>
+                    )}
+                </div>
+            }
         </>
     );
 }
