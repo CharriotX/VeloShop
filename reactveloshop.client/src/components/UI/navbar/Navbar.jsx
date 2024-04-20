@@ -31,7 +31,7 @@ function Navbar() {
                         ? <div>
                             <div><Link to="/profile">Profile</Link></div>
                             <div><Link onClick={() => store.logout()}>Logout</Link></div>
-                          </div>
+                        </div>
                         : <div><Link to="/login">Login</Link></div>
                     }
                 </div>

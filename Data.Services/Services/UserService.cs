@@ -5,6 +5,7 @@ using Data.Interface.Models.enums;
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.UsersService;
 using Microsoft.AspNetCore.Http;
+using System.Data;
 
 namespace Data.Services.Services
 {
@@ -32,7 +33,15 @@ namespace Data.Services.Services
 
         public CurrentUserData GetUserById(int id)
         {
-            throw new NotImplementedException();
+            var userData = _userRepository.Get(id);
+
+            return new CurrentUserData
+            {
+                Id = userData.Id,
+                Email = userData.Email,
+                Username = userData.Username,
+                Role = userData.Role
+            };
         }
 
         public GeneretedTokensWithUserData Login(string email, string password)
@@ -40,14 +49,48 @@ namespace Data.Services.Services
             throw new NotImplementedException();
         }
 
-        public UserDataWithTokens Register(string username, string email, string password)
+        public void Register(string username, string email, string password)
         {
-            throw new NotImplementedException();
+            var isEmailExis = _userRepository.IsEmailExist(email);
+
+            if (isEmailExis)
+            {
+                throw new Exception("This email already registered");
+            }
+
+            var passwordHash = _passwordHasher.Generate(password);
+
+            var userData = new UserData
+            {
+                Email = email,
+                Username = username,
+                PasswordHash = passwordHash
+            };
+
+            _userRepository.Create(userData);
         }
 
-        public UserDataWithTokens Register(string username, string email, string password, SiteRole role)
+        public void Register(string username, string email, string password, SiteRole role)
         {
-            throw new NotImplementedException();
+            var isEmailExis = _userRepository.IsEmailExist(email);
+
+            if (isEmailExis)
+            {
+                throw new Exception("This email already registered");
+            }
+
+            var passwordHash = _passwordHasher.Generate(password);
+
+            var userData = new UserData
+            {
+                Email = email,
+                Username = username,
+                PasswordHash = passwordHash,
+                Role = role
+            };
+
+            _userRepository.Create(userData);
+
         }
     }
 }

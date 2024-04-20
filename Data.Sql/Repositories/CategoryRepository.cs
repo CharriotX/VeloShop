@@ -15,7 +15,10 @@ namespace Data.Sql.Repositories
 
         public Category GetByName(string name)
         {
-            return _dbSet.Include(x => x.Subcategories).Where(x => x.IsActive).FirstOrDefault(x => x.Name == name);
+            return _dbSet
+                .Include(x => x.Subcategories)
+                .Where(x => x.IsActive)
+                .FirstOrDefault(x => x.Name == name);
         }
 
         public CategoryData GetCategoryDataByName(string name)
@@ -42,16 +45,15 @@ namespace Data.Sql.Repositories
                     Id = x.Id,
                     Name = x.Name
                 }).ToList()
-
             };
         }
 
-        public List<CategoryWithSubcategoriesData> GetCategoriesWithSubcategories()
+        public async Task<List<CategoryWithSubcategoriesData>> GetCategoriesWithSubcategories()
         {
-            var categories = _dbSet
+            var categories = await _dbSet
                 .Where(x => x.IsActive)
                 .Include(x => x.Subcategories.Where(x => x.IsActive))
-                .ToList();
+                .ToListAsync();
 
             var data = categories.Select(x => new CategoryWithSubcategoriesData
             {
