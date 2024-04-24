@@ -1,34 +1,23 @@
-﻿using Data.Interface.DataModels.Tokens;
-using Data.Interface.DataModels.Users;
-using Data.Interface.Models;
-using Data.Interface.Models.enums;
+﻿using Data.Interface.DataModels.Users;
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.UsersService;
-using Microsoft.AspNetCore.Http;
 using System.Data;
 
 namespace Data.Services.Services
 {
     public class UserService : IUserService
     {
-        private IPasswordHasher _passwordHasher;
         private IUserRepository _userRepository;
-        private IJwtProvider _jwtProvider;
-        private IHttpContextAccessor _httpContext;
-        private ITokenRepository _tokenRepository;
 
-        public UserService(IPasswordHasher passwordHasher, IUserRepository userRepository, IJwtProvider jwtProvider, IHttpContextAccessor httpContext, ITokenRepository tokenRepository)
+
+        public UserService(IUserRepository userRepository)
         {
-            _passwordHasher = passwordHasher;
             _userRepository = userRepository;
-            _jwtProvider = jwtProvider;
-            _httpContext = httpContext;
-            _tokenRepository = tokenRepository;
         }
 
-        public GeneretedTokensData GetToken(int userId)
+        public bool IsEmailExist(string email)
         {
-            throw new NotImplementedException();
+            return _userRepository.IsEmailExist(email);
         }
 
         public CurrentUserData GetUserById(int id)
@@ -43,54 +32,30 @@ namespace Data.Services.Services
                 Role = userData.Role
             };
         }
-
-        public GeneretedTokensWithUserData Login(string email, string password)
+        public UserWithRefreshTokenData GetUserByUsername(string username)
         {
-            throw new NotImplementedException();
+            var userData = _userRepository.GetByUsername(username);
+
+            return new UserWithRefreshTokenData
+            {
+                UserId = userData.Id,
+                Email = userData.Email,
+                Username = userData.Username,
+                RefreshToken = userData.RefreshToken,
+                Role = userData.Role
+            };
         }
 
-        public void Register(string username, string email, string password)
+        public List<CurrentUserData> GetUsers()
         {
-            var isEmailExis = _userRepository.IsEmailExist(email);
-
-            if (isEmailExis)
+            var users = _userRepository.GetAll();
+            return users.Select(x => new CurrentUserData
             {
-                throw new Exception("This email already registered");
-            }
-
-            var passwordHash = _passwordHasher.Generate(password);
-
-            var userData = new UserData
-            {
-                Email = email,
-                Username = username,
-                PasswordHash = passwordHash
-            };
-
-            _userRepository.Create(userData);
-        }
-
-        public void Register(string username, string email, string password, SiteRole role)
-        {
-            var isEmailExis = _userRepository.IsEmailExist(email);
-
-            if (isEmailExis)
-            {
-                throw new Exception("This email already registered");
-            }
-
-            var passwordHash = _passwordHasher.Generate(password);
-
-            var userData = new UserData
-            {
-                Email = email,
-                Username = username,
-                PasswordHash = passwordHash,
-                Role = role
-            };
-
-            _userRepository.Create(userData);
-
+                Id = x.Id,
+                Username = x.Username,
+                Email = x.Email,
+                Role = x.Role
+            }).ToList();
         }
     }
 }

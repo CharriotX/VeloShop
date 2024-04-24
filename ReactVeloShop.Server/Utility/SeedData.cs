@@ -1,6 +1,8 @@
-﻿using Data.Interface.Models;
+﻿using Data.Interface.DataModels.Users;
+using Data.Interface.Models;
 using Data.Interface.Models.enums;
 using Data.Interface.Repositories;
+using Data.Services.Interfaces.AuthService;
 using Data.Services.Interfaces.UsersService;
 
 namespace ReactVeloShop.Server.Utility
@@ -172,11 +174,18 @@ namespace ReactVeloShop.Server.Utility
         public static void SeedUsers(IServiceScope scope)
         {
             var userRepository = scope.ServiceProvider.GetService<IUserRepository>();
-            var userService = scope.ServiceProvider.GetService<IUserService>();
+            var authService = scope.ServiceProvider.GetService<IAuthService>();
+
+            var adminData = new RegisterUserData
+            {
+                Email = ADMIN_EMAIL,
+                Username = ADMIN_NAME_ROLE,
+                Password = ADMIN_PASSWORD
+            };
 
             if (!userRepository.IsUsernameExist(ADMIN_NAME_ROLE))
             {
-                userService.Register(ADMIN_NAME_ROLE, ADMIN_EMAIL, ADMIN_PASSWORD, SiteRole.Admin );
+                authService.Register(adminData, SiteRole.Admin );
             }
         }
     }

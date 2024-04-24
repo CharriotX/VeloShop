@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ReactVeloShop.Server.Helpers.Jwt;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace ReactVeloShop.Server.Middlewares
@@ -18,44 +19,13 @@ namespace ReactVeloShop.Server.Middlewares
         }
         public Task Invoke(HttpContext context, IUserService userService, IOptions<JwtOptions> options, IJwtProvider jwtProvider)
         {
-            var authorizeHeaders = context.Request.Headers["Authorization"].FirstOrDefault();
+            var authHeader = context.Request.Headers.ContainsKey("autorization");
 
-            if (authorizeHeaders.IsNullOrEmpty())
+            if (context.Request.Headers.ContainsKey("autorization"))
             {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                return _next(context);
+                var token = context.Request.Headers["autorization"].FirstOrDefault().Split(" ").Last();
+                attachUserToContext(context, userService, token, options);
             }
-
-            var accessToken = context.Request.Headers["Authorization"].FirstOrDefault().Split(" ").Last();
-
-            if (accessToken.IsNullOrEmpty())
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                return _next(context);
-            }
-
-            var principal = jwtProvider.ValidateAccessJwtToken(accessToken);
-
-            if (principal == null)
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                return _next(context);
-            }
-
-            attachUserToContext(context, userService, accessToken, options);
-
-            //if (!authorizeHeaders.IsNullOrEmpty())
-            //{
-            //    var jwt = context.Request.Headers["Authorization"].FirstOrDefault().Split(" ").Last();
-
-            //    if (jwt != null)
-            //    {
-            //        await attachUserToContext(context, userService, jwt, options);
-            //    }
-            //} else
-            //{
-            //    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            //}
 
             return _next(context);
         }
@@ -66,7 +36,7 @@ namespace ReactVeloShop.Server.Middlewares
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(options.Value.SecretKey);
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -76,9 +46,10 @@ namespace ReactVeloShop.Server.Middlewares
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "Id").Value);
+                var username = jwtToken.Claims.First(x => x.Type == ClaimTypes.Name).Value;
+                var userData = userService.GetUserByUsername(username);
 
-                context.Items["UserData"] = userService.GetUserById(userId);
+                context.User = principal;
             }
             catch
             {

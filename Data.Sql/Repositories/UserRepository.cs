@@ -20,7 +20,7 @@ namespace Data.Sql.Repositories
         {
             return _dbSet.Any(x => x.Email == email);
         }
-    
+
         public UserData GetByEmail(string email)
         {
             var user = _dbSet.Where(x => x.IsActive).FirstOrDefault(x => x.Email == email);
@@ -36,9 +36,9 @@ namespace Data.Sql.Repositories
             return userData;
         }
 
-        public UserData GetByUsername(string username)
+        public UserData GetById(int id)
         {
-            var user = _dbSet.Where(x => x.IsActive).FirstOrDefault(x => x.Username == username);
+            var user = _dbSet.Where(x => x.IsActive).FirstOrDefault(x => x.Id == id);
             var userData = new UserData
             {
                 Id = user.Id,
@@ -46,6 +46,22 @@ namespace Data.Sql.Repositories
                 Email = user.Email,
                 PasswordHash = user.PasswordHash,
                 Role = user.Role
+            };
+
+            return userData;
+        }
+
+        public UserData GetByUsername(string username)
+        {
+            var user = _dbSet.Where(x => x.IsActive).Include(x => x.Token).FirstOrDefault(x => x.Username == username);
+            var userData = new UserData
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                PasswordHash = user.PasswordHash,
+                Role = user.Role,
+                RefreshToken = user.Token.RefreshToken
             };
 
             return userData;
@@ -70,27 +86,6 @@ namespace Data.Sql.Repositories
                 Id = user.Id,
                 Email = user.Email,
                 Username = user.Username
-            };
-        }
-
-        public void SaveToken(int userId, string token)
-        {
-            var user = Get(userId);
-            user.Token = new Token()
-            {
-                RefreshToken = token
-            };
-
-            _webContext.SaveChanges();
-        }
-
-        public GeneretedTokensData GetTokens(int userId)
-        {
-            var user = _dbSet.Include(x => x.Token).FirstOrDefault(x => x.Id == userId);
-
-            return new GeneretedTokensData
-            {
-                RefreshToken = user.Token.RefreshToken
             };
         }
     }

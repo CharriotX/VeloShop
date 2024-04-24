@@ -1,7 +1,7 @@
 ﻿import { useContext, useState } from "react";
-import AuthService from "../services/AuthService";
 import { Context } from "../main";
 import { observer } from "mobx-react-lite";
+import MyProfile from "./MyProfile";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -10,6 +10,10 @@ function Login() {
 
     const { store } = useContext(Context);
 
+
+    if (store.isAuth) {
+        return (<MyProfile></MyProfile>)
+    }
 
     return (
         <div>

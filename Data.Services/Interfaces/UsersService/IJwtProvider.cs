@@ -6,8 +6,7 @@ namespace Data.Services.Interfaces.UsersService
 {
     public interface IJwtProvider
     {
-        Task<GeneretedTokensData> GenerateTokens(UserData user);
-        ClaimsPrincipal ValidateAccessJwtToken(string token);
-        ClaimsPrincipal ValidateRefreshJwtToken(string token);
+        TokensData GenerateTokens(UserData data);
+        ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
     }
 }

@@ -9,9 +9,8 @@ namespace Data.Interface.Repositories
         CurrentUserData Create(UserData data);
         UserData GetByEmail(string email);
         UserData GetByUsername(string username);
+        UserData GetById(int id);
         bool IsUsernameExist(string username);
         bool IsEmailExist(string email);
-        void SaveToken(int userId, string token);
-        GeneretedTokensData GetTokens(int userId);
     }
 }

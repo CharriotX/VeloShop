@@ -1,4 +1,3 @@
-import axios from "axios";
 import $api from "../http/index";
 
 export default class AuthService {
@@ -16,5 +15,11 @@ export default class AuthService {
 
     static async myProfile() {
         return await $api.get("/profile");
+    }
+
+    static async getUsers() {
+        const response = await $api.get("/users")
+        console.log(response)
+        return response;
     }
 }

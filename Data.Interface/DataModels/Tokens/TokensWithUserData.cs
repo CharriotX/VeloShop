@@ -2,7 +2,7 @@
 
 namespace Data.Interface.DataModels.Tokens
 {
-    public class GeneretedTokensWithUserData
+    public class TokensWithUserData
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
