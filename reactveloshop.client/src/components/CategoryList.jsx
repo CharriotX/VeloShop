@@ -25,7 +25,7 @@ function CategoryList() {
             <div className={classes.List} >
                 {isLoading
                     ? <div>Иддет загрузка</div>
-                    :categories.map(category =>
+                    : categories.map(category =>
                         <CategoryItem key={category.id} category={category}></CategoryItem>)
                 }
             </div>

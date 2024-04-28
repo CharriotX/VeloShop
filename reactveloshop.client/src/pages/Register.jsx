@@ -1,32 +1,35 @@
 ﻿import { useContext, useState } from "react";
-import { Navigate, Link } from "react-router-dom";
 import { Context } from "../main";
+import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import MyButton from "../components/UI/button/MyButton";
 import MyInput from "../components/UI/input/MyInput";
 import classes from '../styles/Login.module.css'
-
-function Login() {
+import MyButton from "../components/UI/button/MyButton";
+function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
 
     const { store } = useContext(Context);
-
-
-    if (store.isAuth) {
-        return (<Navigate to={'/profile'} replace></Navigate>)
-    }
 
     return (
         <div className={classes.login}>
             <div className={classes.loginForm}>
-                <h1 className={classes.title}>Log In</h1>
+                <h1 className={classes.title}>Registration</h1>
                 <div>
                     <MyInput
                         onChange={e => setEmail(e.target.value)}
                         value={email}
                         type="text"
                         placeholder="Email"
+                    ></MyInput>
+                </div>
+                <div>
+                    <MyInput
+                        onChange={e => setUsername(e.target.value)}
+                        value={username}
+                        type="text"
+                        placeholder="Username"
                     ></MyInput>
                 </div>
                 <div>
@@ -38,14 +41,14 @@ function Login() {
                     ></MyInput>
                 </div>
                 <div className={classes.submitBtn}>
-                    <MyButton className={classes.btn} onClick={() => store.login(email, password)}>Login</MyButton>
+                    <MyButton className={classes.btn} onClick={() => store.registration(username, email, password)}>Registration</MyButton>
                 </div>
                 <div className={classes.registerRedirect}>
-                    Еще нет аккаунта? <Link to="/registration">Перейти к регистрации.</Link>
+                    Уже зарегистрированы? <Link to="/login">Войти.</Link>
                 </div>
             </div>
         </div>
     );
 }
 
-export default observer(Login);
+export default observer(Register);

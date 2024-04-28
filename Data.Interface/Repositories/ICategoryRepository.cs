@@ -8,6 +8,6 @@ namespace Data.Interface.Repositories
         Category GetByName(string name);
         CategoryData GetCategoryDataByName(string name);
         Task<CategoryWithSubcategoriesData> GetCategoryDataById(int id);
-        List<CategoryWithSubcategoriesData> GetCategoriesWithSubcategories();
+        Task<List<CategoryWithSubcategoriesData>> GetCategoriesWithSubcategories();
     }
 }

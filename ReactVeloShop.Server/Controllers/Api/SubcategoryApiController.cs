@@ -23,8 +23,10 @@ namespace ReactVeloShop.Server.Controllers.Api
         public async Task<IActionResult> GetSubcategoriesByCategoryId(int categoryId)
         {
             var category = await _categoryService.GetCategoryById(categoryId);
+
+            var subcategories = category.Subcategories;
             
-            return Ok(category);
+            return Ok(subcategories);
         }
 
         [HttpPost]

@@ -26,9 +26,9 @@ var opt = serviceProvider.GetRequiredService<IOptions<JwtOptions>>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+
 builder.Services.AddSwaggerGen(swagger =>
 {
     //This is to generate the Default UI of Swagger Documentation
@@ -78,11 +78,7 @@ ApiExtentions.AddApiAuthentication(builder.Services, opt);
 builder.Services.AddWebEncoders();
 builder.Services.AddScoped<IUserService>(x =>
     new UserService(
-        x.GetService<IPasswordHasher>(),
-        x.GetService<IUserRepository>(),
-        x.GetService<IJwtProvider>(),
-        x.GetService<IHttpContextAccessor>(),
-        x.GetService<ITokenRepository>()));
+        x.GetService<IUserRepository>()));
 builder.Services.AddScoped<ICategoryService>(x =>
     new CategoryService(
         x.GetService<ICategoryRepository>(), 
@@ -92,7 +88,8 @@ builder.Services.AddScoped<IAuthService>(x =>
     new AuthService(
         x.GetService<ITokenRepository>(),
         x.GetService<IJwtProvider>(),
-        x.GetService<IUserRepository>()));
+        x.GetService<IUserRepository>(),
+        x.GetService<IPasswordHasher>()));
 
 
 builder.Services.AddScoped<ICategoryRepository>(x => new CategoryRepository(x.GetService<WebContext>()));
@@ -100,7 +97,7 @@ builder.Services.AddScoped<IProductRepository>(x => new ProductRepository(x.GetS
 builder.Services.AddScoped<ISubcategoryRepository>(x => new SubcategoryRepository(x.GetService<WebContext>(), x.GetService<ICategoryRepository>()));
 builder.Services.AddScoped<ISpecificationRepository>(x => new SpecificationRepository(x.GetService<WebContext>()));
 builder.Services.AddScoped<IUserRepository>(x => new UserRepository(x.GetService<WebContext>()));
-builder.Services.AddScoped<ITokenRepository>(x => new TokenRepository(x.GetService<WebContext>()));
+builder.Services.AddScoped<ITokenRepository>(x => new TokenRepository(x.GetService<WebContext>(), x.GetService<IUserRepository>()));
 
 var app = builder.Build();
 SeedData.Seed(app);
@@ -132,7 +129,7 @@ app.UseCookiePolicy(new CookiePolicyOptions
     HttpOnly = HttpOnlyPolicy.Always
 });
 
-//app.UseMiddleware<AuthMiddleware>();
+app.UseMiddleware<AuthMiddleware>();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

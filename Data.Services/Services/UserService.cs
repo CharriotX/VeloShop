@@ -1,53 +1,49 @@
-﻿using Data.Interface.DataModels.Tokens;
-using Data.Interface.DataModels.Users;
-using Data.Interface.Models;
-using Data.Interface.Models.enums;
+﻿using Data.Interface.DataModels.Users;
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.UsersService;
-using Microsoft.AspNetCore.Http;
+using System.Data;
 
 namespace Data.Services.Services
 {
     public class UserService : IUserService
     {
-        private IPasswordHasher _passwordHasher;
         private IUserRepository _userRepository;
-        private IJwtProvider _jwtProvider;
-        private IHttpContextAccessor _httpContext;
-        private ITokenRepository _tokenRepository;
 
-        public UserService(IPasswordHasher passwordHasher, IUserRepository userRepository, IJwtProvider jwtProvider, IHttpContextAccessor httpContext, ITokenRepository tokenRepository)
+
+        public UserService(IUserRepository userRepository)
         {
-            _passwordHasher = passwordHasher;
             _userRepository = userRepository;
-            _jwtProvider = jwtProvider;
-            _httpContext = httpContext;
-            _tokenRepository = tokenRepository;
         }
 
-        public GeneretedTokensData GetToken(int userId)
+        public bool IsEmailExist(string email)
         {
-            throw new NotImplementedException();
+            return _userRepository.IsEmailExist(email);
         }
 
         public CurrentUserData GetUserById(int id)
         {
-            throw new NotImplementedException();
-        }
+            var userData = _userRepository.Get(id);
 
-        public GeneretedTokensWithUserData Login(string email, string password)
-        {
-            throw new NotImplementedException();
+            return new CurrentUserData
+            {
+                Id = userData.Id,
+                Email = userData.Email,
+                Username = userData.Username,
+                Role = userData.Role
+            };
         }
-
-        public UserDataWithTokens Register(string username, string email, string password)
+        public UserWithRefreshTokenData GetUserByUsername(string username)
         {
-            throw new NotImplementedException();
-        }
+            var userData = _userRepository.GetByUsername(username);
 
-        public UserDataWithTokens Register(string username, string email, string password, SiteRole role)
-        {
-            throw new NotImplementedException();
+            return new UserWithRefreshTokenData
+            {
+                UserId = userData.Id,
+                Email = userData.Email,
+                Username = userData.Username,
+                RefreshToken = userData.RefreshToken,
+                Role = userData.Role
+            };
         }
     }
 }

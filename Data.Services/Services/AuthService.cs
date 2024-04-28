@@ -1,5 +1,6 @@
 ﻿using Data.Interface.DataModels.Tokens;
 using Data.Interface.DataModels.Users;
+using Data.Interface.Models;
 using Data.Interface.Models.enums;
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.AuthService;
@@ -12,41 +13,110 @@ namespace Data.Services.Services
         private ITokenRepository _tokenRepository;
         private IUserRepository _userRepository;
         private IJwtProvider _jwtProvider;
-        public AuthService(ITokenRepository tokenRepository, IJwtProvider jwtProvider, IUserRepository userRepository)
+        private IPasswordHasher _passwordHasher;
+        public AuthService(ITokenRepository tokenRepository, IJwtProvider jwtProvider, IUserRepository userRepository, IPasswordHasher passwordHasher)
         {
             _tokenRepository = tokenRepository;
             _jwtProvider = jwtProvider;
             _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
         }
 
-        public GeneretedTokensData GetToken(int userId)
+
+        public TokensWithUserData Login(string email, string password)
         {
-            throw new NotImplementedException();
+            var userData = _userRepository.GetByEmail(email);
+            var verifyPass = _passwordHasher.Verify(password, userData.PasswordHash);
+
+            if (verifyPass == false)
+            {
+                return null;
+            }
+
+            var tokens = _jwtProvider.GenerateTokens(userData);
+
+            var newTokens = _tokenRepository.SetToken(userData.Id, tokens.RefreshToken);
+
+            if (newTokens == null)
+            {
+                return null;
+            }
+
+            return new TokensWithUserData
+            {
+                AccessToken = tokens.AccessToken,
+                RefreshToken = tokens.RefreshToken,
+                UserData = new ProfileData
+                {
+                    Email = userData.Email,
+                    Username = userData.Username,
+                }
+            };
+
         }
 
-        public GeneretedTokensWithUserData Login(string email, string password)
+        public void Register(RegisterUserData data)
         {
-            throw new NotImplementedException();
+            var passwordHash = _passwordHasher.Generate(data.Password);
+
+            var userData = new UserData
+            {
+                Email = data.Email,
+                Username = data.Username,
+                PasswordHash = passwordHash,
+                Role = SiteRole.User
+            };
+
+            _userRepository.Create(userData);
         }
 
-        public void Logout(string refreshToken)
+        public void Register(RegisterUserData data, SiteRole role)
         {
-            throw new NotImplementedException();
+            var passwordHash = _passwordHasher.Generate(data.Password);
+
+            var userData = new UserData
+            {
+                Email = data.Email,
+                Username = data.Username,
+                PasswordHash = passwordHash,
+                Role = role
+            };
+
+            _userRepository.Create(userData);
         }
 
-        public GeneretedTokensWithUserData Refresh(string refreshToken)
+        public TokensWithUserData UpdateRefreshToken(string username, string refreshToken)
         {
-            throw new NotImplementedException();
-        }
+            var userData = _userRepository.GetByUsername(username);
+            var savedUserToken = userData.RefreshToken;
 
-        public UserDataWithTokens Register(string username, string email, string password)
-        {
-            throw new NotImplementedException();
-        }
+            if (refreshToken != savedUserToken)
+            {
+                return null;
+            }
 
-        public UserDataWithTokens Register(string username, string email, string password, SiteRole role)
-        {
-            throw new NotImplementedException();
+            var newJwtTokens = _jwtProvider.GenerateTokens(userData);
+
+            if (newJwtTokens == null)
+            {
+                return null;
+            }
+
+            var tokenAndUserData = new TokensWithUserData
+            {
+                RefreshToken = newJwtTokens.RefreshToken,
+                AccessToken = newJwtTokens.AccessToken,
+                UserData = new ProfileData
+                {
+                    Email = userData.Email,
+                    Username = userData.Username
+                }
+            };
+
+            _tokenRepository.RemoveToken(refreshToken);
+            _tokenRepository.SetToken(userData.Id, newJwtTokens.RefreshToken);
+
+            return tokenAndUserData;
         }
     }
 }

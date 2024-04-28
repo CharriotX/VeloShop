@@ -17,9 +17,9 @@ namespace ReactVeloShop.Server.Controllers.Api
         }
 
         [HttpGet]
-        public IActionResult GetAllCategoriesWithAllSubcategories()
+        public async Task<IActionResult> GetAllCategoriesWithAllSubcategories()
         {
-            var models = _categoryService.GetAllCategoriesWithSubcategories();
+            var models = await _categoryService.GetAllCategoriesWithSubcategories();
             return Ok(models);
         }
 

@@ -16,8 +16,6 @@ function Navbar() {
 
     const { store } = useContext(Context);
 
-    const router = useNavigate();
-
     useEffect(() => {
         fetchCategory()
     }, [])
@@ -31,7 +29,7 @@ function Navbar() {
                         ? <div>
                             <div><Link to="/profile">Profile</Link></div>
                             <div><Link onClick={() => store.logout()}>Logout</Link></div>
-                          </div>
+                        </div>
                         : <div><Link to="/login">Login</Link></div>
                     }
                 </div>

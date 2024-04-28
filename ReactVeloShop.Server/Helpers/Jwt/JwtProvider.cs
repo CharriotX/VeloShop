@@ -19,19 +19,67 @@ namespace ReactVeloShop.Server.Helpers.Jwt
             _options = options.Value;
         }
 
-        public Task<GeneretedTokensData> GenerateTokens(UserData user)
+        public TokensData GenerateTokens(UserData data)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+                var claims = new List<Claim> {
+                    new Claim(ClaimTypes.Name, data.Username),
+                    new Claim(ClaimTypes.Role, data.Role.ToString())
+                };
+                var tokenKey = Encoding.UTF8.GetBytes(_options.SecretKey);
+                var token = new JwtSecurityToken(
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(120),
+                    signingCredentials: credentials);
+
+                var refreshToken = GenerateRefreshToken();
+                return new TokensData { AccessToken = tokenHandler.WriteToken(token), RefreshToken = refreshToken };
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
-        public ClaimsPrincipal ValidateAccessJwtToken(string token)
+        private string GenerateRefreshToken()
         {
-            throw new NotImplementedException();
+            var randomNumber = new byte[64];
+
+            using var generator = RandomNumberGenerator.Create();
+
+            generator.GetBytes(randomNumber);
+
+            return Convert.ToBase64String(randomNumber);
         }
 
-        public ClaimsPrincipal ValidateRefreshJwtToken(string token)
+        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
-            throw new NotImplementedException();
+            var Key = Encoding.UTF8.GetBytes(_options.SecretKey);
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Key),
+                ClockSkew = TimeSpan.Zero
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            JwtSecurityToken jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
+
+            return principal;
         }
     }
 

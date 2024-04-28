@@ -3,36 +3,39 @@ import { useParams } from 'react-router-dom';
 import { useFetching } from '../hooks/useFetching';
 import CategoryService from '../services/CategoryService';
 import { useEffect } from 'react';
-import CategoryItem from '../components/CategoryItem';
-import SubcategoryItem from '../components/SubcategoryItem';
+import classes from "../styles/CatalogIdPage.module.css"
+import SubcategoriesList from '../components/SubcategoriesList';
 
 function CatalogIdPage() {
-    const { id } = useParams();
+    const params = useParams();
     const [category, setCategory] = useState({});
-    const [subcategories, setSubcategories] = useState([])
+    const [subcategories, setSubcategories] = useState([]);
 
     const [fetchCategory, isLoading, error] = useFetching(async (id) => {
-        const response = await CategoryService.getSubcategoriesByCategoryId(id);
+        const response = await CategoryService.getById(id);
         setCategory(response.data)
-        setSubcategories(response.data.subcategories)
+    })
+
+    const [fetchSubcategory, isSubcategoryLoading, subError] = useFetching(async (id) => {
+        const response = await CategoryService.getSubcategoriesByCategoryId(id);
+        setSubcategories(response.data)
     })
 
     useEffect(() => {
-        fetchCategory(id)
-    }, [id])
-
-    console.log(subcategories)
+        fetchCategory(params.id)
+        fetchSubcategory(params.id)
+    }, [params])
 
     return (
         <>
-            <h2 >{category.name}</h2>
             {isLoading
                 ? <div>Loading</div>
-                : <div>
-                    {subcategories.map(sub =>
-                        <SubcategoryItem key={sub.id} sub={sub}></SubcategoryItem>
-                    )}
-                </div>
+                : <h2 className={classes.CategoryTitle}>{category.name}</h2>              
+            }
+
+            {isSubcategoryLoading
+                ? <div>Loading</div>
+                : <SubcategoriesList subcategories={subcategories}></SubcategoriesList>
             }
         </>
     );

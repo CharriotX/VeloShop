@@ -8,23 +8,29 @@ const $api = axios.create({
 })
 
 $api.interceptors.request.use((config) => {
-    config.headers.Autorization = `Bearer ${localStorage.getItem('token')}`;
-    return config;
-})
-
-$api.interceptors.response.use((config) => {   
-    return config;
-}, async erorr => {
-    const originarRequest = erorr.config;
-    if (erorr.response.status == 401) {
-        try {
-            const response = await axios.get(`${API_URL}/refresh`, { withCredentials: true });
-            localStorage.setItem("token", response.data.accessToken);
-            return $api.request(originarRequest);
-        } catch (e) {
-            console.log("Пользователь не авторизован")
-        }
+    if (config.headers) {
+        config.headers.Autorization = `Bearer ${localStorage.getItem('token')}`;
+        console.log(config);
     }
-})
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
+axios.interceptors.response.use((response) => {
+    return response;
+}, async (error) => {
+    const originarRequest = error.config;
+    if (error.response.status === 401 && error.config && !error.config._isRetry) {
+        originarRequest._isRetry = true;
+        const response = await axios.get(`${API_URL}/refresh`, { withCredentials: true });
+        localStorage.setItem("token", response.data.accessToken);
+        console.log("response interceptors")
+        return $api.request(originarRequest);
+    }
+
+    return Promise.reject(error.message);
+});
+
 
 export default $api;

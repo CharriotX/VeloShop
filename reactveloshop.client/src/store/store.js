@@ -1,10 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 import AuthService from '../services/AuthService';
 import axios from 'axios';
-import { API_URL } from '../http/index';
 
 export default class Store {
-    user = {};
+    user = {username:"", email: "" };
     isAuth = false;
 
     constructor() {
@@ -22,7 +21,6 @@ export default class Store {
     async login(email, password) {
         try {
             const response = await AuthService.login(email, password);
-            console.log(response)
             localStorage.setItem('token', response.data.accessToken)
             this.setAuth(true);
             this.setUser(response.data.userData);
@@ -40,14 +38,13 @@ export default class Store {
             console.log(e.response.data.message)
         }
     }
+
     async logout() {
         try {
-            const response = await AuthService.logout();
-            console.log(response)
+            await AuthService.logout();
             localStorage.removeItem("token");
             this.setAuth(false);
             this.setUser({});
-            console.log(this.isAuth, this.user)
         } catch (e) {
             console.log(e.response.data.message)
         }
@@ -55,14 +52,13 @@ export default class Store {
 
     async checkAuth() {
         try {
-            const response = await axios.get(`${API_URL}/refresh`, { withCredentials: true })
-            console.log(response)
+            const token = localStorage.getItem('token')
+            const response = await axios.post(`https://localhost:7245/api/user/refresh`, { accessToken: token }, { withCredentials: true })
             localStorage.setItem('token', response.data.accessToken)
             this.setAuth(true);
             this.setUser(response.data.userData);
         } catch (e) {
-            console.log(e.response.data.message)
-        }
+            localStorage.removeItem('token')
+        }        
     }
-
 }

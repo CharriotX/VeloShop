@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { routes } from "../router";
+import { observer } from "mobx-react-lite"
 
 
 function AppRouter() {
@@ -20,4 +21,4 @@ function AppRouter() {
     );
 }
 
-export default AppRouter;
+export default observer(AppRouter);

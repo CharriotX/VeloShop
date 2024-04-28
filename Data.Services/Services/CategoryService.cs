@@ -27,9 +27,9 @@ namespace Data.Services.Services
             return data;
         }
 
-        public List<CategoryWithSubcategoriesData> GetAllCategoriesWithSubcategories()
+        public async Task<List<CategoryWithSubcategoriesData>> GetAllCategoriesWithSubcategories()
         {
-            var data = _categoryRepository.GetCategoriesWithSubcategories();
+            var data = await _categoryRepository.GetCategoriesWithSubcategories();
             var models = data.Select(x => new CategoryWithSubcategoriesData()
             {
                 Id = x.Id,

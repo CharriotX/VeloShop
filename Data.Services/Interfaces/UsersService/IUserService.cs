@@ -6,6 +6,9 @@ namespace Data.Services.Interfaces.UsersService
 {
     public interface IUserService
     {
+       
         CurrentUserData GetUserById(int id);
+        UserWithRefreshTokenData GetUserByUsername(string username);
+        bool IsEmailExist(string email);
     }
 }
