@@ -44,7 +44,6 @@ namespace Data.Services.Services
             return models;
         }
 
-
         public async Task<CategoryWithSubcategoriesData> GetCategoryById(int id)
         {
             var category = await _categoryRepository.GetCategoryDataById(id);

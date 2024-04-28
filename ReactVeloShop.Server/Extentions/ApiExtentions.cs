@@ -47,8 +47,6 @@ namespace ReactVeloShop.Server.Extentions
                 options.AddPolicy("Admin",
                      policy => policy.RequireRole(SiteRole.Admin.ToString()));
             });
-
-            services.AddScoped<IAuthorizationHandler, RoleAuthorizationHandler>();
         }
     }
 }
