@@ -16,8 +16,6 @@ function Navbar() {
 
     const { store } = useContext(Context);
 
-    const router = useNavigate();
-
     useEffect(() => {
         fetchCategory()
     }, [])

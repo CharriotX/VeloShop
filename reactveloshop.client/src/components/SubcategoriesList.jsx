@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import classes from "../styles/SubcategoriesList.module.css"
 
 function SubcategoriesList({ subcategories }) {

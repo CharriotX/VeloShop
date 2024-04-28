@@ -1,0 +1,35 @@
+.login {
+    display: flex;
+    justify-content: center;
+    margin-top: 120px;
+    padding: 0 0 30px 0;
+}
+.title{
+    text-align: center;
+    margin: 30px
+}
+
+.loginForm {
+    max-width: 500px;
+    border: 1px solid #ebebeb;
+    box-shadow: 5px 5px 5px #ebebeb;
+}
+
+.submitBtn{
+    display: flex;
+    justify-content: center;
+}
+
+
+.loginForm div {
+    margin: 10px;
+    max-width: 300px;
+}
+.registerRedirect{
+    padding-top: 30px;
+    text-align: center;
+}
+
+.registerRedirect a{
+    color: blue;
+}

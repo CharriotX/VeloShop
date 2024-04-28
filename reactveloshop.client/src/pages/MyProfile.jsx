@@ -1,13 +1,11 @@
-﻿import { useContext, useEffect, useState } from "react";
+﻿import { useContext, useEffect } from "react";
 import { Context } from "../main";
 import { observer } from "mobx-react-lite";
 import Login from "./Login";
-import AuthService from "../services/AuthService";
+import classes from '../styles/MyProfile.module.css'
 
 function MyProfile() {
     const { store } = useContext(Context);
-    const [user, setUser] = useState([]);
-    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         //var response = AuthService.myProfile();
@@ -15,31 +13,30 @@ function MyProfile() {
 
     }, [])
 
-    console.log(store.user.email, store.isAuth)
-
-    const fetchUsers = () => {
-        const response = AuthService.getUsers();
-        console.log(response.data)
-        setUsers(response.data);
-    }
-
     if (!store.isAuth) {
         return (<Login></Login>)
     }
 
     return (
         <div>
-            {store.isAuth ? `Пользователь авторизован под ${store.user.email}` : "Авторизуйтесь!"}
-            <div>
-                <button onClick={() => store.logout()}>Logout</button>
-            </div>
-            <div>
-                <button onClick={() => fetchUsers()}>Users</button>
-                <ul>
-                    {users && users.map(user =>
-                        <li key={user.id }>{user.name}</li>
-                    )}
-                </ul>
+            <h1 className={classes.title}>Profile info</h1>
+            <div className={classes.profileInfo}>
+                <div className={classes.infoCol}>
+                    <div>
+                        Username
+                    </div>
+                    <div>
+                        Email
+                    </div>
+                </div>
+                <div className={classes.infoCol}>
+                    <div>
+                        {store.user.username}
+                    </div>
+                    <div>
+                        {store.user.email}
+                    </div>
+                </div>
             </div>
         </div>
     );

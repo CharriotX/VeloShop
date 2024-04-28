@@ -30,7 +30,7 @@ namespace Data.Services.Services
 
             if (verifyPass == false)
             {
-                throw new Exception("Wrong password!");
+                return null;
             }
 
             var tokens = _jwtProvider.GenerateTokens(userData);
@@ -92,14 +92,14 @@ namespace Data.Services.Services
 
             if (refreshToken != savedUserToken)
             {
-                throw new UnauthorizedAccessException();
+                return null;
             }
 
             var newJwtTokens = _jwtProvider.GenerateTokens(userData);
 
             if (newJwtTokens == null)
             {
-                throw new UnauthorizedAccessException();
+                return null;
             }
 
             var tokenAndUserData = new TokensWithUserData

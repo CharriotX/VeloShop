@@ -10,6 +10,5 @@ namespace Data.Services.Interfaces.UsersService
         CurrentUserData GetUserById(int id);
         UserWithRefreshTokenData GetUserByUsername(string username);
         bool IsEmailExist(string email);
-        List<CurrentUserData> GetUsers();
     }
 }

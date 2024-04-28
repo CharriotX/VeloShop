@@ -45,17 +45,5 @@ namespace Data.Services.Services
                 Role = userData.Role
             };
         }
-
-        public List<CurrentUserData> GetUsers()
-        {
-            var users = _userRepository.GetAll();
-            return users.Select(x => new CurrentUserData
-            {
-                Id = x.Id,
-                Username = x.Username,
-                Email = x.Email,
-                Role = x.Role
-            }).ToList();
-        }
     }
 }

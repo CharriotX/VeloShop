@@ -60,19 +60,22 @@ namespace ReactVeloShop.Server.Controllers.Api
         {
             var user = _userService.IsEmailExist(data.Email);
 
-            if (user == null)
+            if (user == false)
             {
-                return Unauthorized("Wrong email");
+                return Unauthorized("User with this email was not found");
             }
 
             var userWithTokens = _authService.Login(data.Email, data.Password);
+            if (userWithTokens == null)
+            {
+                return Unauthorized();
+            }
 
             _httpContextAccessor.HttpContext.Response.Cookies.Append("refresh", userWithTokens.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTimeOffset.UtcNow.AddDays(30)
             });
-
 
             return Ok(userWithTokens);
         }
@@ -96,8 +99,13 @@ namespace ReactVeloShop.Server.Controllers.Api
 
             var newTokens = _authService.UpdateRefreshToken(username, refreshToken);
 
-           _httpContextAccessor.HttpContext.Response.Cookies.Delete("refresh");
-           _httpContextAccessor.HttpContext.Response.Cookies.Append("refresh", newTokens.RefreshToken, new CookieOptions
+            if (newTokens == null)
+            {
+                return Unauthorized();
+            }
+
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete("refresh");
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("refresh", newTokens.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTimeOffset.UtcNow.AddDays(30)
@@ -106,7 +114,7 @@ namespace ReactVeloShop.Server.Controllers.Api
             return Ok(newTokens);
         }
 
-        
+
         [HttpGet]
         [Route("profile")]
         [Authorize]
@@ -120,15 +128,6 @@ namespace ReactVeloShop.Server.Controllers.Api
             }
 
             return Ok(userData);
-        }
-
-        [HttpGet]
-        [Authorize(Roles ="Admin")]
-        [Route("users")]
-        public ActionResult GetUsers()
-        {
-            var users = _userService.GetUsers();
-            return Ok(users);
         }
     }
 }

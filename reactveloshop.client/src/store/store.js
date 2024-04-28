@@ -3,7 +3,7 @@ import AuthService from '../services/AuthService';
 import axios from 'axios';
 
 export default class Store {
-    user = { id: 1, username:"", email: "" };
+    user = {username:"", email: "" };
     isAuth = false;
 
     constructor() {
@@ -16,7 +16,6 @@ export default class Store {
 
     setUser(user) {
         this.user = user;
-        console.log(user)
     }
 
     async login(email, password) {
@@ -52,11 +51,14 @@ export default class Store {
     }
 
     async checkAuth() {
-        const token = localStorage.getItem('token')
-        const response = await axios.post(`https://localhost:7245/api/user/refresh`, { accessToken: token }, { withCredentials: true })
-        console.log(response)
-        localStorage.setItem('token', response.data.accessToken)
-        this.setAuth(true);
-        this.setUser(response.data.userData);
+        try {
+            const token = localStorage.getItem('token')
+            const response = await axios.post(`https://localhost:7245/api/user/refresh`, { accessToken: token }, { withCredentials: true })
+            localStorage.setItem('token', response.data.accessToken)
+            this.setAuth(true);
+            this.setUser(response.data.userData);
+        } catch (e) {
+            localStorage.removeItem('token')
+        }        
     }
 }
