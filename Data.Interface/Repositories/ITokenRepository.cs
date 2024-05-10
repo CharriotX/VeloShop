@@ -5,10 +5,10 @@ namespace Data.Interface.Repositories
 {
     public interface ITokenRepository
     {
-        void RemoveToken(string refreshToken);
-        TokensData SetToken(int userId, string refreshToken);
-        UserWithRefreshTokenData GetTokenWithUserId(string refreshToken);
-        void SaveToken(int userId, string token);
-        TokensData GetTokens(int userId);
+        Task RemoveToken(string refreshToken);
+        Task<TokensData> SetToken(int userId, string refreshToken);
+        Task<UserWithRefreshTokenData> GetTokenWithUserId(string refreshToken);
+        Task SaveToken(int userId, string token);
+        Task<TokensData> GetTokens(int userId);
     }
 }

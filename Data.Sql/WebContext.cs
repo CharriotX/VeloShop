@@ -10,6 +10,7 @@ namespace Data.Sql
         public DbSet<Category> Categories { get; set; }
         public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<Specification> Specifications { get; set; }
+        public DbSet<ProductSpecification> ProductsSpecifications { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Token> Tokens { get; set; }
 

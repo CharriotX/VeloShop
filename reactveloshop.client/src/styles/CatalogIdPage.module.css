@@ -2,3 +2,16 @@
     margin: 20px 0;
     text-align: center;
 }
+
+.totalRecords{
+    display: flex;
+    align-items:center;
+    margin:5px;
+    font-size: 14px;
+    color: lightgrey;
+}
+
+    .totalRecords span {
+        border: 1px solid lightgray;
+        padding: 2px 5px;
+    }

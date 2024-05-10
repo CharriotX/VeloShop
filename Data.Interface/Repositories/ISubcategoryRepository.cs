@@ -5,7 +5,7 @@ namespace Data.Interface.Repositories
 {
     public interface ISubcategoryRepository : IBaseRepository<Subcategory>
     {
-        void AddSubCategoryToCategory(string categoryName, string subCategoryName);
-        SubcategoryData GetSubcategoryData(int id);
+        Task AddSubCategoryToCategory(string categoryName, string subCategoryName);
+        Task<SubcategoryData> GetSubcategoryData(int id);
     }
 }

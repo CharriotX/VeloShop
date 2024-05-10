@@ -1,4 +1,4 @@
-﻿import { Link, useNavigate } from "react-router-dom"
+﻿import { Link } from "react-router-dom"
 import classes from "../../../styles/Navbar.module.css"
 import { useContext, useEffect, useState } from "react";
 import { useFetching } from "../../../hooks/useFetching";

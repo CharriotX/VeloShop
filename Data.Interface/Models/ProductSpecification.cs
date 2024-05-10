@@ -1,6 +1,6 @@
 ﻿namespace Data.Interface.Models
 {
-    public class ProductSpecification
+    public class ProductSpecification : BaseModel
     {
         public int ProductId { get; set; }
         public int SpecificationId { get; set; }

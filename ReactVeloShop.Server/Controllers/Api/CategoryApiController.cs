@@ -29,6 +29,5 @@ namespace ReactVeloShop.Server.Controllers.Api
             var model = await _categoryService.GetCategoryById(id);
             return Ok(model);
         }
-
     }
 }

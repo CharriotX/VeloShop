@@ -1,17 +1,7 @@
-﻿using AspNet.Security.OAuth.Validation;
-using Data.Interface.Models.enums;
-using Data.Services.Interfaces.UsersService;
-using Data.Services.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Data.Interface.Models.enums;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
-using ReactVeloShop.Server.Helpers.Authorization;
 using ReactVeloShop.Server.Helpers.Jwt;
 using System.Text;
 

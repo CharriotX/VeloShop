@@ -15,14 +15,14 @@ namespace Data.Services.Services
             _userRepository = userRepository;
         }
 
-        public bool IsEmailExist(string email)
+        public async Task<bool> IsEmailExist(string email)
         {
-            return _userRepository.IsEmailExist(email);
+            return await _userRepository.IsEmailExist(email);
         }
 
-        public CurrentUserData GetUserById(int id)
+        public async Task<CurrentUserData> GetUserById(int id)
         {
-            var userData = _userRepository.Get(id);
+            var userData = await _userRepository.Get(id);
 
             return new CurrentUserData
             {
@@ -32,9 +32,9 @@ namespace Data.Services.Services
                 Role = userData.Role
             };
         }
-        public UserWithRefreshTokenData GetUserByUsername(string username)
+        public async Task<UserWithRefreshTokenData> GetUserByUsername(string username)
         {
-            var userData = _userRepository.GetByUsername(username);
+            var userData = await _userRepository.GetByUsername(username);
 
             return new UserWithRefreshTokenData
             {

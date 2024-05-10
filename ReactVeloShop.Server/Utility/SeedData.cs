@@ -3,7 +3,6 @@ using Data.Interface.Models;
 using Data.Interface.Models.enums;
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.AuthService;
-using Data.Services.Interfaces.UsersService;
 
 namespace ReactVeloShop.Server.Utility
 {
@@ -21,34 +20,36 @@ namespace ReactVeloShop.Server.Utility
         const string ADMIN_PASSWORD = "admin";
 
         private static List<string> _categories = new List<string> { BIKE_CATEGORY_NAME, ACCESSORY_CATEGORY_NAME, SPARE_CATEGORY_NAME, TOOL_CATEGORY_NAME, EQUIPMENT_CATEGORY_NAME, SCOOTER_CATEGORY_NAME };
-        private static List<string> _bikeSubcategories = new List<string> { "Горные велосипеды", "Женские велосипеды", "Детские велосипеды", "Подростковые велосипеды", "Городские велосипеды", "Шоссейные велосипеды", "Складные велосипеды", "Велосипеды BMX",};
+        private static List<string> _bikeSubcategories = new List<string> { "Горные велосипеды", "Женские велосипеды", "Детские велосипеды", "Подростковые велосипеды", "Городские велосипеды", "Шоссейные велосипеды", "Складные велосипеды", "Велосипеды BMX", };
         private static List<string> _accessorySubcategories = new List<string> { "Велозамки", "Освещение", "Насосы", "Щитки", "Багажники", "Велокомпьютеры", "Велосумки", "Грипсы", "Подножки" };
         private static List<string> _spareSubcategories = new List<string> { "Велокамеры", "Велопокрышки", "Переключатели", "Педали", "Вилки", "Каретки, системы и шатуны", "Колеса и части", "Манетки и шифтеры", "Рулевое управление", "Подшипники", "Седла и части", "Тормозная система", "Цепи" };
-        private static List<string> _toolSubcategories = new List<string> { "Многофункциональные инструменты", "Уход за велосипедом", "Велоаптечки"};
-        private static List<string> _equiomentSubcategories = new List<string> { "Шлемы", "Перчатки"};
-        private static List<string> _scooterSubcategories = new List<string> { "Взрослые самокаты", "Детские самокаты", "Трюковые самокаты", "Запчасти для самоката"};
+        private static List<string> _toolSubcategories = new List<string> { "Многофункциональные инструменты", "Уход за велосипедом", "Велоаптечки" };
+        private static List<string> _equiomentSubcategories = new List<string> { "Шлемы", "Перчатки" };
+        private static List<string> _scooterSubcategories = new List<string> { "Взрослые самокаты", "Детские самокаты", "Трюковые самокаты", "Запчасти для самоката" };
 
-        private static List<string> _bikeSpecifications = new List<string>{ "Диаметр колес", "Материал рамы", "Размер рамы", "Количество скоростей", "Манетки", "Вилка", "Руль", "Седло" };
+        private static List<string> _bikeSpecifications = new List<string> { "Диаметр колес", "Материал рамы", "Размер рамы", "Количество скоростей", "Манетки", "Вилка", "Руль", "Седло" };
 
-        public static void Seed(WebApplication webApplication)
+        public static async Task Seed(WebApplication webApplication)
         {
-            using(var scope = webApplication.Services.CreateScope())
+            using (var scope = webApplication.Services.CreateAsyncScope())
             {
-                SeedCategory(scope);
-                SeedSubcategoriesForCategories(scope);
-                SeedSpecifications(scope);
-                SeedUsers(scope);
+                await SeedCategory(scope);
+                await SeedSubcategoriesForCategories(scope);
+                await SeedSpecifications(scope);
+                await SeedUsers(scope);
+                await SeedProducts(scope);
+                await SeedSpecificationsToBikeCategory(scope);
             }
         }
 
 
-        public static void SeedCategory(IServiceScope scope)
+        public static async Task SeedCategory(IServiceScope scope)
         {
             var categoryRepository = scope.ServiceProvider.GetService<ICategoryRepository>();
 
-            if (!categoryRepository.Any())
+            if (!await categoryRepository.Any())
             {
-                foreach(var item in _categories)
+                foreach (var item in _categories)
                 {
                     var model = new Category()
                     {
@@ -56,19 +57,19 @@ namespace ReactVeloShop.Server.Utility
                         IsActive = true
                     };
 
-                    categoryRepository.Add(model);
+                    await categoryRepository.Add(model);
                 }
             }
         }
 
-        public static void SeedSubcategoriesForCategories(IServiceScope scope)
+        public static async Task SeedSubcategoriesForCategories(IServiceScope scope)
         {
             var categoryRepository = scope.ServiceProvider.GetService<ICategoryRepository>();
             var subcategoryRepository = scope.ServiceProvider.GetService<ISubcategoryRepository>();
 
-            if (!subcategoryRepository.Any())
+            if (!await subcategoryRepository.Any())
             {
-                var bikeCategory = categoryRepository.GetByName(BIKE_CATEGORY_NAME);
+                var bikeCategory = await categoryRepository.GetByName(BIKE_CATEGORY_NAME);
                 foreach (var item in _bikeSubcategories)
                 {
                     var model = new Subcategory()
@@ -78,7 +79,7 @@ namespace ReactVeloShop.Server.Utility
                         IsActive = true
                     };
 
-                    subcategoryRepository.Add(model);
+                    await subcategoryRepository.Add(model);
                 }
 
                 var accessoryCategory = categoryRepository.GetByName(ACCESSORY_CATEGORY_NAME);
@@ -86,12 +87,12 @@ namespace ReactVeloShop.Server.Utility
                 {
                     var model = new Subcategory()
                     {
-                        Category = accessoryCategory,
+                        Category = accessoryCategory.Result,
                         Name = item,
                         IsActive = true
                     };
 
-                    subcategoryRepository.Add(model);
+                    await subcategoryRepository.Add(model);
                 }
 
                 var spareCategory = categoryRepository.GetByName(SPARE_CATEGORY_NAME);
@@ -99,12 +100,12 @@ namespace ReactVeloShop.Server.Utility
                 {
                     var model = new Subcategory()
                     {
-                        Category = spareCategory,
+                        Category = spareCategory.Result,
                         Name = item,
                         IsActive = true
                     };
 
-                    subcategoryRepository.Add(model);
+                    await subcategoryRepository.Add(model);
                 }
 
                 var toolCategory = categoryRepository.GetByName(TOOL_CATEGORY_NAME);
@@ -112,12 +113,12 @@ namespace ReactVeloShop.Server.Utility
                 {
                     var model = new Subcategory()
                     {
-                        Category = toolCategory,
+                        Category = toolCategory.Result,
                         Name = item,
                         IsActive = true
                     };
 
-                    subcategoryRepository.Add(model);
+                    await subcategoryRepository.Add(model);
                 }
 
                 var equipmentCategory = categoryRepository.GetByName(EQUIPMENT_CATEGORY_NAME);
@@ -125,12 +126,12 @@ namespace ReactVeloShop.Server.Utility
                 {
                     var model = new Subcategory()
                     {
-                        Category = equipmentCategory,
+                        Category = equipmentCategory.Result,
                         Name = item,
                         IsActive = true
                     };
 
-                    subcategoryRepository.Add(model);
+                    await subcategoryRepository.Add(model);
                 }
 
                 var scooterCategory = categoryRepository.GetByName(SCOOTER_CATEGORY_NAME);
@@ -138,24 +139,24 @@ namespace ReactVeloShop.Server.Utility
                 {
                     var model = new Subcategory()
                     {
-                        Category = scooterCategory,
+                        Category = scooterCategory.Result,
                         Name = item,
                         IsActive = true
                     };
 
-                    subcategoryRepository.Add(model);
+                    await subcategoryRepository.Add(model);
                 }
             }
         }
 
-        public static void SeedSpecifications(IServiceScope scope)
+        public static async Task SeedSpecifications(IServiceScope scope)
         {
             var categoryRepository = scope.ServiceProvider.GetService<ICategoryRepository>();
             var specificationRepository = scope.ServiceProvider.GetService<ISpecificationRepository>();
 
-            if (!specificationRepository.Any())
+            if (!await specificationRepository.Any())
             {
-                var bikeCategory = categoryRepository.GetByName(BIKE_CATEGORY_NAME);
+                var bikeCategory = await categoryRepository.GetByName(BIKE_CATEGORY_NAME);
 
                 foreach (var item in _bikeSpecifications)
                 {
@@ -166,12 +167,12 @@ namespace ReactVeloShop.Server.Utility
                         IsActive = true
                     };
 
-                    specificationRepository.Add(model);
+                    await specificationRepository.Add(model);
                 }
             }
         }
 
-        public static void SeedUsers(IServiceScope scope)
+        public static async Task SeedUsers(IServiceScope scope)
         {
             var userRepository = scope.ServiceProvider.GetService<IUserRepository>();
             var authService = scope.ServiceProvider.GetService<IAuthService>();
@@ -183,10 +184,80 @@ namespace ReactVeloShop.Server.Utility
                 Password = ADMIN_PASSWORD
             };
 
-            if (!userRepository.IsUsernameExist(ADMIN_NAME_ROLE))
+            if (!userRepository.IsUsernameExist(ADMIN_NAME_ROLE).Result)
             {
-                authService.Register(adminData, SiteRole.Admin );
+                await authService.Register(adminData, SiteRole.Admin);
             }
+        }
+
+        public static async Task SeedProducts(IServiceScope scope)
+        {
+            var productRepository = scope.ServiceProvider.GetService<IProductRepository>();
+
+            if (!await productRepository.Any())
+            {
+                var categoryRepository = scope.ServiceProvider.GetService<ICategoryRepository>();
+                var subcategoryRepository = scope.ServiceProvider.GetService<ISubcategoryRepository>();
+
+                var allCategories = await categoryRepository.GetCategoriesWithSubcategories();
+
+                foreach (var category in allCategories)
+                {
+                    var subcategories = categoryRepository.GetAllSubcategoriesOfTheCategory(category.Id);
+                    foreach (var subcategory in category.Subcategories)
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            var productModel = new Product()
+                            {
+                                Name = subcategory.Name,
+                                BrandName = "Brand Name",
+                                Description = "Description",
+                                Price = 100,
+                                Category = categoryRepository.Get(category.Id).Result,
+                                Subcategory = await subcategoryRepository.Get(subcategory.Id),
+                                IsActive = true
+                            };
+
+                            await productRepository.Add(productModel);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static async Task SeedSpecificationsToBikeCategory(IServiceScope scope)
+        {
+            var productSpecificationRepository = scope.ServiceProvider.GetService<IProductSpecificationRepository>();
+
+            if (!await productSpecificationRepository.Any())
+            {
+                var categoryRepository = scope.ServiceProvider.GetService<ICategoryRepository>();
+                var productRepository = scope.ServiceProvider.GetService<IProductRepository>();
+                var specificationRepository = scope.ServiceProvider.GetService<ISpecificationRepository>();
+
+                var bikeCategory = await categoryRepository.GetCategoryDataByName(BIKE_CATEGORY_NAME);
+                var products = await productRepository.GetAllProductsByCategory(bikeCategory.Id);
+
+                foreach (var product in products)
+                {
+                    var specificationList = await specificationRepository.GetAll();
+
+                    foreach (var spec in specificationList)
+                    {
+                        var model = new ProductSpecification()
+                        {
+                            ProductId = product.Id,
+                            SpecificationId = spec.Id,
+                            Value = "Seed value",
+                            IsActive = true
+                        };
+
+                        await productSpecificationRepository.Add(model);
+                    }
+                }
+            }
+
         }
     }
 }

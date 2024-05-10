@@ -7,8 +7,8 @@ namespace Data.Services.Interfaces.UsersService
     public interface IUserService
     {
        
-        CurrentUserData GetUserById(int id);
-        UserWithRefreshTokenData GetUserByUsername(string username);
-        bool IsEmailExist(string email);
+        Task<CurrentUserData> GetUserById(int id);
+        Task<UserWithRefreshTokenData> GetUserByUsername(string username);
+        Task<bool> IsEmailExist(string email);
     }
 }

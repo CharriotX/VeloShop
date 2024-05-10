@@ -1,18 +1,9 @@
 ﻿using Data.Interface.DataModels.Tokens;
 using Data.Interface.DataModels.Users;
-using Data.Interface.Models;
-using Data.Interface.Models.enums;
 using Data.Services.Interfaces.AuthService;
 using Data.Services.Interfaces.UsersService;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
 
 namespace ReactVeloShop.Server.Controllers.Api
 {
@@ -41,7 +32,7 @@ namespace ReactVeloShop.Server.Controllers.Api
                 return BadRequest();
             }
 
-            var isEmailExist = _userService.IsEmailExist(data.Email);
+            var isEmailExist = await _userService.IsEmailExist(data.Email);
 
             if (isEmailExist)
             {
@@ -56,16 +47,16 @@ namespace ReactVeloShop.Server.Controllers.Api
 
         [HttpPost]
         [Route("login")]
-        public ActionResult Login(LoginUserData data)
+        public async Task<ActionResult> Login(LoginUserData data)
         {
-            var user = _userService.IsEmailExist(data.Email);
+            var user = await _userService.IsEmailExist(data.Email);
 
             if (user == false)
             {
                 return Unauthorized("User with this email was not found");
             }
 
-            var userWithTokens = _authService.Login(data.Email, data.Password);
+            var userWithTokens = await _authService.Login(data.Email, data.Password);
             if (userWithTokens == null)
             {
                 return Unauthorized();
@@ -91,13 +82,13 @@ namespace ReactVeloShop.Server.Controllers.Api
 
         [HttpPost]
         [Route("refresh")]
-        public ActionResult RefreshToken(AccessTokenData accessTokenData)
+        public async Task<ActionResult> RefreshToken(AccessTokenData accessTokenData)
         {
             var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["refresh"];
             var principal = _jwtProvider.GetPrincipalFromExpiredToken(accessTokenData.AccessToken);
             var username = principal.Identity?.Name;
 
-            var newTokens = _authService.UpdateRefreshToken(username, refreshToken);
+            var newTokens = await _authService.UpdateRefreshToken(username, refreshToken);
 
             if (newTokens == null)
             {

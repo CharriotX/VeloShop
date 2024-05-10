@@ -4,10 +4,10 @@ namespace Data.Interface.Repositories
 {
     public interface IBaseRepository<TDbModel> where TDbModel : BaseModel 
     {
-        TDbModel Get(int id);
-        List<TDbModel> GetAll();
-        void Add(TDbModel model);
-        void Remove(int id);
-        bool Any();
+        Task<TDbModel> Get(int id);
+        Task<List<TDbModel>> GetAll();
+        Task Add(TDbModel model);
+        Task Remove(int id);
+        Task<bool> Any();
     }
 }

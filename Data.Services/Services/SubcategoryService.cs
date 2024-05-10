@@ -12,19 +12,19 @@ namespace Data.Services.Services
             _subcategoryRepository = subcategoryRepository;
         }
 
-        public void AddNewSubcategory(NewSubcategoryData data)
+        public async Task AddNewSubcategory(NewSubcategoryData data)
         {
-            _subcategoryRepository.AddSubCategoryToCategory(data.CategoryName, data.SubcategoryName);
+            await _subcategoryRepository.AddSubCategoryToCategory(data.CategoryName, data.SubcategoryName);
         }
 
-        public void RemoveSubcategory(int id)
+        public async Task RemoveSubcategory(int id)
         {
-            _subcategoryRepository.Remove(id);
+            await _subcategoryRepository.Remove(id);
         }
 
-        public SubcategoryData GetSubcategory(int id)
+        public async Task<SubcategoryData> GetSubcategory(int id)
         {
-            return _subcategoryRepository.GetSubcategoryData(id);
+            return await _subcategoryRepository.GetSubcategoryData(id);
         }
     }
 }
