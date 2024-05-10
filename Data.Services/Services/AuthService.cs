@@ -23,9 +23,9 @@ namespace Data.Services.Services
         }
 
 
-        public TokensWithUserData Login(string email, string password)
+        public async Task<TokensWithUserData> Login(string email, string password)
         {
-            var userData = _userRepository.GetByEmail(email);
+            var userData = await _userRepository.GetByEmail(email);
             var verifyPass = _passwordHasher.Verify(password, userData.PasswordHash);
 
             if (verifyPass == false)
@@ -55,7 +55,7 @@ namespace Data.Services.Services
 
         }
 
-        public void Register(RegisterUserData data)
+        public async Task Register(RegisterUserData data)
         {
             var passwordHash = _passwordHasher.Generate(data.Password);
 
@@ -67,10 +67,10 @@ namespace Data.Services.Services
                 Role = SiteRole.User
             };
 
-            _userRepository.Create(userData);
+            await _userRepository.Create(userData);
         }
 
-        public void Register(RegisterUserData data, SiteRole role)
+        public async Task Register(RegisterUserData data, SiteRole role)
         {
             var passwordHash = _passwordHasher.Generate(data.Password);
 
@@ -82,12 +82,12 @@ namespace Data.Services.Services
                 Role = role
             };
 
-            _userRepository.Create(userData);
+            await _userRepository.Create(userData);
         }
 
-        public TokensWithUserData UpdateRefreshToken(string username, string refreshToken)
+        public  async Task<TokensWithUserData> UpdateRefreshToken(string username, string refreshToken)
         {
-            var userData = _userRepository.GetByUsername(username);
+            var userData = await _userRepository.GetByUsername(username);
             var savedUserToken = userData.RefreshToken;
 
             if (refreshToken != savedUserToken)
@@ -113,8 +113,8 @@ namespace Data.Services.Services
                 }
             };
 
-            _tokenRepository.RemoveToken(refreshToken);
-            _tokenRepository.SetToken(userData.Id, newJwtTokens.RefreshToken);
+            await _tokenRepository.RemoveToken(refreshToken);
+            await _tokenRepository.SetToken(userData.Id, newJwtTokens.RefreshToken);
 
             return tokenAndUserData;
         }

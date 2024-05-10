@@ -6,10 +6,10 @@ namespace Data.Services.Interfaces.AuthService
 {
     public interface IAuthService
     {
-        TokensWithUserData Login(string email, string password);
-        void Register(RegisterUserData data);
-        void Register(RegisterUserData data, SiteRole role);
-        TokensWithUserData UpdateRefreshToken(string username, string refreshToken);
+        Task<TokensWithUserData> Login(string email, string password);
+        Task Register(RegisterUserData data);
+        Task Register(RegisterUserData data, SiteRole role);
+        Task<TokensWithUserData> UpdateRefreshToken(string username, string refreshToken);
         
     }
 }

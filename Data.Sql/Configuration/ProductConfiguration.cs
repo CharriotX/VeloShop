@@ -20,11 +20,15 @@ namespace Data.Sql.Configuration
                .WithMany(c => c.Products);
 
             builder
+               .HasOne(p => p.Subcategory)
+               .WithMany(c => c.Products);
+
+            builder
                 .HasMany(p => p.Specifications)
                 .WithMany(s => s.Products)
                 .UsingEntity<ProductSpecification>(
-                    r => r.HasOne<Specification>().WithMany().HasForeignKey(s => s.SpecificationId),
-                    l => l.HasOne<Product>().WithMany().HasForeignKey(p => p.ProductId)
+                    r => r.HasOne<Specification>().WithMany(e => e.ProductSpecifications),
+                    l => l.HasOne<Product>().WithMany(e => e.ProductSpecifications)
                 );
         }
     }

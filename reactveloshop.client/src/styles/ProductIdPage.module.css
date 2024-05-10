@@ -1,0 +1,61 @@
+.productContainer {
+    margin-top: 50px;
+}
+
+.productTitle {
+    margin: 20px 0;
+    text-align: center;
+}
+
+
+.productBody {
+    display: flex;
+    height: 600px;
+    justify-content: space-between;
+}
+
+.productImage {
+    width: 70%;
+    display: flex;
+    align-items: center;
+    border: 1px solid #e9e9e9;
+}
+
+    .productImage img {
+        width: 100%;
+    }
+
+.productPriceBlock {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.productPrice {
+    margin: 10px 0 50px 0;
+}
+
+.productDesc {
+    margin: 20px;
+}
+
+.productDescTitle {
+    padding: 20px 0;
+    font-size: 20px;
+}
+
+.productDescText {
+    padding: 20px 0;
+}
+
+.productDescSpecification {
+
+}
+.productSpecRow {
+    padding: 5px;
+}
+.productSpecCol {
+    padding: 5px;
+    width: 300px;
+}

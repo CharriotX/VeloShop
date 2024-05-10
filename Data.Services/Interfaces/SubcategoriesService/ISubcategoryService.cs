@@ -4,8 +4,8 @@ namespace Data.Services.Interfaces.SubcategoriesService
 {
     public interface ISubcategoryService
     {
-        void AddNewSubcategory(NewSubcategoryData data);
-        void RemoveSubcategory(int id);
-        SubcategoryData GetSubcategory(int id);
+        Task AddNewSubcategory(NewSubcategoryData data);
+        Task RemoveSubcategory(int id);
+        Task<SubcategoryData> GetSubcategory(int id);
     }
 }

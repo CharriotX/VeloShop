@@ -1,6 +1,8 @@
-﻿using Data.Interface.DataModels.Subcategories;
+﻿using Data.Interface.DataModels.Products;
+using Data.Interface.DataModels.Subcategories;
 using Data.Interface.Models;
 using Data.Interface.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Sql.Repositories
 {
@@ -12,9 +14,9 @@ namespace Data.Sql.Repositories
             _categoryRepository = categoryRepository;
         }
 
-        public void AddSubCategoryToCategory(string categoryName, string subCategoryName)
+        public async Task AddSubCategoryToCategory(string categoryName, string subCategoryName)
         {
-            var category = _categoryRepository.GetByName(categoryName);
+            var category = await _categoryRepository.GetByName(categoryName);
             var model = new Subcategory()
             {
                 Name = subCategoryName,
@@ -22,12 +24,12 @@ namespace Data.Sql.Repositories
                 IsActive = true
             };
 
-            Add(model);
+            await Add(model);
         }
 
-        public SubcategoryData GetSubcategoryData(int id)
+        public async Task<SubcategoryData> GetSubcategoryData(int id)
         {
-            var subcategory = Get(id);
+            var subcategory = await Get(id);
             var data = new SubcategoryData
             {
                 Id = subcategory.Id,

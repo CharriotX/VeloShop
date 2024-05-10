@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Data.Services.Interfaces.ProductsService;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ReactVeloShop.Server.Controllers.Api
 {
@@ -6,11 +7,31 @@ namespace ReactVeloShop.Server.Controllers.Api
     [Route("/api/product")]
     public class ProductApiContoller : ControllerBase
     {
-        public ProductApiContoller() { }
+        private IProductService _productService;
+        public ProductApiContoller(IProductService productService)
+        {
+            _productService = productService;
+        }
 
-        //public ActionResult GetAllProducts()
-        //{
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetProduct(int id)
+        {
+            var data = await _productService.GetProductData(id);
+            return Ok(data);
+        }
 
-        //}
+        [HttpGet("category/{categoryId}")]
+        public async Task<ActionResult> GetAllProductsByCategoryWithPagination(int categoryId, int pageNumber = 1, int pageSize = 5)
+        {
+            var products = await _productService.GetProductDataByCategoryWithPagination(categoryId, pageNumber, pageSize);
+            return Ok(products);
+        }
+
+        [HttpGet("subcategory/{subcategoryId}")]
+        public async Task<ActionResult> GetAllProductsBySubcategory(int subcategoryId, int pageNumber = 1, int pageSize = 5)
+        {
+            var products = await _productService.GetProductDataBySubcategoryWithPagination(subcategoryId, pageNumber, pageSize);
+            return Ok(products);
+        }
     }
 }

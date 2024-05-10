@@ -1,6 +1,7 @@
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.AuthService;
 using Data.Services.Interfaces.CategoriesService;
+using Data.Services.Interfaces.ProductsService;
 using Data.Services.Interfaces.SubcategoriesService;
 using Data.Services.Interfaces.UsersService;
 using Data.Services.Services;
@@ -8,6 +9,7 @@ using Data.Sql;
 using Data.Sql.Repositories;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
@@ -79,6 +81,11 @@ builder.Services.AddWebEncoders();
 builder.Services.AddScoped<IUserService>(x =>
     new UserService(
         x.GetService<IUserRepository>()));
+builder.Services.AddScoped<IProductService>(x =>
+    new ProductService(
+        x.GetService<IProductRepository>()
+         ));
+
 builder.Services.AddScoped<ICategoryService>(x =>
     new CategoryService(
         x.GetService<ICategoryRepository>(), 
@@ -91,9 +98,10 @@ builder.Services.AddScoped<IAuthService>(x =>
         x.GetService<IUserRepository>(),
         x.GetService<IPasswordHasher>()));
 
-
+builder.Services.AddScoped<IProductSpecificationRepository>(x =>
+    new ProductSpecificationRepository(x.GetService<WebContext>()));
 builder.Services.AddScoped<ICategoryRepository>(x => new CategoryRepository(x.GetService<WebContext>()));
-builder.Services.AddScoped<IProductRepository>(x => new ProductRepository(x.GetService<WebContext>()));
+builder.Services.AddScoped<IProductRepository>(x => new ProductRepository(x.GetService<WebContext>(), x.GetService<ICategoryRepository>(), x.GetService<ISpecificationRepository>()));
 builder.Services.AddScoped<ISubcategoryRepository>(x => new SubcategoryRepository(x.GetService<WebContext>(), x.GetService<ICategoryRepository>()));
 builder.Services.AddScoped<ISpecificationRepository>(x => new SpecificationRepository(x.GetService<WebContext>()));
 builder.Services.AddScoped<IUserRepository>(x => new UserRepository(x.GetService<WebContext>()));

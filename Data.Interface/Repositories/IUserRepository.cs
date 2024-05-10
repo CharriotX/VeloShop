@@ -6,11 +6,11 @@ namespace Data.Interface.Repositories
 {
     public interface IUserRepository : IBaseRepository<User>
     {
-        CurrentUserData Create(UserData data);
-        UserData GetByEmail(string email);
-        UserData GetByUsername(string username);
-        UserData GetById(int id);
-        bool IsUsernameExist(string username);
-        bool IsEmailExist(string email);
+        Task<bool> IsUsernameExist(string username);
+        Task<bool> IsEmailExist(string email);
+        Task<CurrentUserData> Create(UserData data);
+        Task<UserData> GetByEmail(string email);
+        Task<UserData> GetByUsername(string username);
+        Task<UserData> GetById(int id);        
     }
 }

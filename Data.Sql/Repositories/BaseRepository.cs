@@ -8,45 +8,45 @@ namespace Data.Sql.Repositories
     {
         protected WebContext _webContext;
         protected DbSet<TDbModel> _dbSet;
-        
+
         protected BaseRepository(WebContext webContext)
         {
             _webContext = webContext;
             _dbSet = webContext.Set<TDbModel>();
         }
 
-        public TDbModel Get(int id)
+        public async Task<TDbModel> Get(int id)
         {
-            return _dbSet
+            return await _dbSet
                 .Where(x => x.IsActive)
-                .FirstOrDefault(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public List<TDbModel> GetAll()
+        public async Task<List<TDbModel>> GetAll()
         {
-            return _dbSet
+            return await _dbSet
                 .Where(x => x.IsActive)
-                .ToList();
+                .ToListAsync();
         }
 
-        public void Add(TDbModel model)
+        public async Task Add(TDbModel model)
         {
-            _dbSet.Add(model);
-            _webContext.SaveChanges();
+            await _dbSet.AddAsync(model);
+            await _webContext.SaveChangesAsync();
         }
 
-        public void Remove(int id)
+        public async Task Remove(int id)
         {
-            var model = Get(id);
+            var model = await Get(id);
             model.IsActive = false;
-            _webContext.SaveChanges();
+            await _webContext.SaveChangesAsync();
         }
 
-        public bool Any()
+        public async Task<bool> Any()
         {
-            return _dbSet
+            return await _dbSet
                 .Where(x => x.IsActive)
-                .Any();
+                .AnyAsync();
         }
     }
 }

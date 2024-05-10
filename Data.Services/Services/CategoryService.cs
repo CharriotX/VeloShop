@@ -15,9 +15,9 @@ namespace Data.Services.Services
             _subcategoryRepository = subcategoryRepository;
         }
 
-        public List<CategoryData> GetAllCategories()
+        public async Task<List<CategoryData>> GetAllCategories()
         {
-            var models = _categoryRepository.GetAll();
+            var models = await _categoryRepository.GetAll();
             var data = models.Select(x => new CategoryData
             {
                 Id = x.Id,

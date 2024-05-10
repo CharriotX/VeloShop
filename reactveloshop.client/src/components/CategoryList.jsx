@@ -17,8 +17,6 @@ function CategoryList() {
         fetchCategory()
     }, [])
 
-    console.log(categories)
-
     return (
         <>
             <h2 className={classes.Title}>Каталог магазина</h2>

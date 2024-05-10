@@ -1,0 +1,48 @@
+.card {
+    width: 90%;
+    height: 200px;
+    display: flex;
+
+    border: 1px solid grey;
+    margin: 5px;
+}
+
+    .card:hover {
+        box-shadow: 10px 10px 20px rgba(36, 36, 36, 0.5);
+    }
+
+.cardImage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cardImage img {
+    height: 90%;
+}
+
+.cardBody{
+    width: 50%;
+}
+
+.cardTitle {
+   margin: 10px;
+   font-size: 18px;
+}
+
+.cardDescription {
+    margin: 5px;
+}
+
+.cardPrice{
+    padding: 10px 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
+}
+
+    .cardPrice div {
+        
+    }

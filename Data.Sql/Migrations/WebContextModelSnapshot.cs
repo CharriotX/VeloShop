@@ -70,15 +70,29 @@ namespace Data.Sql.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,4)");
 
+                    b.Property<int>("SubcategoryId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("SubcategoryId");
 
                     b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Data.Interface.Models.ProductSpecification", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -89,11 +103,13 @@ namespace Data.Sql.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ProductId", "SpecificationId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("SpecificationId");
 
-                    b.ToTable("ProductSpecification");
+                    b.ToTable("ProductsSpecifications");
                 });
 
             modelBuilder.Entity("Data.Interface.Models.Specification", b =>
@@ -208,19 +224,27 @@ namespace Data.Sql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Data.Interface.Models.Subcategory", "Subcategory")
+                        .WithMany("Products")
+                        .HasForeignKey("SubcategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("Subcategory");
                 });
 
             modelBuilder.Entity("Data.Interface.Models.ProductSpecification", b =>
                 {
                     b.HasOne("Data.Interface.Models.Product", null)
-                        .WithMany()
+                        .WithMany("ProductSpecifications")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Data.Interface.Models.Specification", null)
-                        .WithMany()
+                        .WithMany("ProductSpecifications")
                         .HasForeignKey("SpecificationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -266,6 +290,21 @@ namespace Data.Sql.Migrations
                     b.Navigation("Specifications");
 
                     b.Navigation("Subcategories");
+                });
+
+            modelBuilder.Entity("Data.Interface.Models.Product", b =>
+                {
+                    b.Navigation("ProductSpecifications");
+                });
+
+            modelBuilder.Entity("Data.Interface.Models.Specification", b =>
+                {
+                    b.Navigation("ProductSpecifications");
+                });
+
+            modelBuilder.Entity("Data.Interface.Models.Subcategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Data.Interface.Models.User", b =>

@@ -17,16 +17,16 @@ namespace Data.Sql.Repositories
             _userRepository = userRepository;
         }
 
-        public void RemoveToken(string refreshToken)
+        public async Task RemoveToken(string refreshToken)
         {
-            var token = _webContext.Tokens.FirstOrDefault(x => x.RefreshToken == refreshToken);
+            var token = await _webContext.Tokens.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken);
             _webContext.Tokens.Remove(token);
-            _webContext.SaveChanges();
+            await _webContext.SaveChangesAsync();
         }
 
-        public TokensData SetToken(int userId, string refreshToken)
+        public async Task<TokensData> SetToken(int userId, string refreshToken)
         {
-            var token = _webContext.Tokens.FirstOrDefault(x => x.UserId == userId);
+            var token = await _webContext.Tokens.FirstOrDefaultAsync(x => x.UserId == userId);
 
             if (token == null)
             {
@@ -36,8 +36,8 @@ namespace Data.Sql.Repositories
                     RefreshToken = refreshToken
                 };
 
-                _webContext.Add(newToken);
-                _webContext.SaveChanges();
+                await _webContext.AddAsync(newToken);
+                await _webContext.SaveChangesAsync();
 
                 return new TokensData
                 {
@@ -46,7 +46,7 @@ namespace Data.Sql.Repositories
             }
 
             token.RefreshToken = refreshToken;
-            _webContext.SaveChanges();
+            await _webContext.SaveChangesAsync();
 
             return new TokensData
             {
@@ -54,9 +54,9 @@ namespace Data.Sql.Repositories
             };
         }
 
-        public UserWithRefreshTokenData GetTokenWithUserId(string refreshToken)
+        public async Task<UserWithRefreshTokenData> GetTokenWithUserId(string refreshToken)
         {
-            var token = _webContext.Tokens.FirstOrDefault(x => x.RefreshToken == refreshToken);
+            var token = await _webContext.Tokens.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken);
 
             if(token == null)
             {
@@ -69,17 +69,17 @@ namespace Data.Sql.Repositories
             };
         }
 
-        public void SaveToken(int userId, string token)
+        public async Task SaveToken(int userId, string token)
         {
-            var user = _userRepository.GetById(userId);
+            var user = await _userRepository.GetById(userId);
             user.RefreshToken = token;
 
-            _webContext.SaveChanges();
+            await _webContext.SaveChangesAsync();
         }
 
-        public TokensData GetTokens(int userId)
+        public async Task<TokensData> GetTokens(int userId)
         {
-            var user = _userRepository.GetById(userId);
+            var user = await _userRepository.GetById(userId);
 
             return new TokensData
             {
