@@ -1,5 +1,7 @@
 ﻿using System;
+using Data.Interface.DataModels.Brands;
 using Data.Interface.DataModels.Categories;
+using Data.Interface.DataModels.Specifications;
 using Data.Interface.DataModels.Subcategories;
 using Data.Interface.Models;
 using Data.Interface.Repositories;
@@ -34,7 +36,7 @@ namespace Data.Sql.Repositories
 
         public async Task<CategoryWithSubcategoriesData> GetCategoryDataById(int id)
         {
-            var category = await _dbSet.Include(x => x.Subcategories).Where(x => x.IsActive).FirstOrDefaultAsync(x => x.Id == id);
+            var category = await _dbSet.Include(x => x.Subcategories).Include(x => x.Specifications).Where(x => x.IsActive).FirstOrDefaultAsync(x => x.Id == id);
 
             return new CategoryWithSubcategoriesData
             {
@@ -70,9 +72,43 @@ namespace Data.Sql.Repositories
             return data;
         }
 
+        public async Task<CategoryDataForAddProduct> GetCategoryDataForAddProduct(int id)
+        {
+            var category = await _dbSet
+                .Where(x => x.IsActive)
+                .Include(x => x.Subcategories.Where(x => x.IsActive))
+                .Include(x => x.Brands)
+                .Include(x => x.Specifications)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            var data = new CategoryDataForAddProduct
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Subcategories = category.Subcategories.Select(x => new SubcategoryData
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToList(),
+                Specifications = category.Specifications.Select(x => new SpecificationData
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                }).ToList(),
+                Brands = category.Brands.Select(x => new BrandData
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    CategoryId = x.Category.Id
+                }).ToList()
+            };
+
+            return data;
+        }
+
         public async Task<CategoryWithSubcategoriesData> GetAllSubcategoriesOfTheCategory(int categoryId)
         {
-            var category = await _dbSet.Include(x =>x.Subcategories).FirstOrDefaultAsync(x => x.Id == categoryId);
+            var category = await _dbSet.Include(x => x.Subcategories).FirstOrDefaultAsync(x => x.Id == categoryId);
 
             var data = new CategoryWithSubcategoriesData
             {

@@ -58,7 +58,7 @@ export default class Store {
             this.setAuth(true);
             this.setUser(response.data.userData);
         } catch (e) {
-            localStorage.removeItem('token')
+            
         }        
     }
 }

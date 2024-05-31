@@ -6,6 +6,8 @@ import MyProfile from "../pages/MyProfile";
 import Register from "../pages/Register";
 import ProductIdPage from "../pages/ProductIdPage";
 import SubcategoryIdPage from "../pages/SubcategoryIdPage";
+import AdminPage from "../pages/AdminPage";
+import AddProductPage from "../pages/AddProductPage";
 
 export const routes = [
     { id: 1, path: "/", component: Home },
@@ -15,5 +17,7 @@ export const routes = [
     { id: 5, path: "/registration", component: Register },
     { id: 6, path: "/profile", component: MyProfile },
     { id: 7, path: "/product/:id", component: ProductIdPage },
-    { id: 8, path: "/subcategory/:id", component: SubcategoryIdPage }
+    { id: 8, path: "/subcategory/:id", component: SubcategoryIdPage },
+    { id: 9, path: "/admin", component: AdminPage },
+    { id: 10, path: "/addProduct", component: AddProductPage }
 ]

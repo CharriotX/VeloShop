@@ -1,5 +1,7 @@
-﻿using Data.Interface.DataModels.PaginationData;
+﻿using Data.Interface.DataModels.Categories;
+using Data.Interface.DataModels.PaginationData;
 using Data.Interface.DataModels.Products;
+using Data.Interface.DataModels.Subcategories;
 
 namespace Data.Services.Interfaces.ProductsService
 {
@@ -8,8 +10,9 @@ namespace Data.Services.Interfaces.ProductsService
         Task<ProductData> GetProductData(int id);
         Task<List<ProductData>> GetProductDataByCategory(int categoryId);
         Task<List<ProductData>> GetProductDataBySubcategory(int subcategoryId);
+        Task<ProductData> CreateProduct(CreateProductData data);
 
-        Task<PageResponse<ProductData>> GetProductDataByCategoryWithPagination(int categoryId, int pageNumber, int pageSize);
-        Task<PageResponse<ProductData>> GetProductDataBySubcategoryWithPagination(int subcategoryId, int pageNumber, int pageSize);
+        Task<PageResponse<CategoryIdPageResponse>> GetProductDataByCategoryWithPagination(int categoryId, int pageNumber, int pageSize);
+        Task<PageResponse<SubcategoryIdPagePesponse>> GetProductDataBySubcategoryWithPagination(int subcategoryId, int pageNumber, int pageSize);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Data.Services.Interfaces.ProductsService;
+﻿using Data.Interface.DataModels.Products;
+using Data.Services.Interfaces.ProductsService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ReactVeloShop.Server.Controllers.Api
@@ -9,7 +10,7 @@ namespace ReactVeloShop.Server.Controllers.Api
     {
         private IProductService _productService;
         public ProductApiContoller(IProductService productService)
-        {
+        {     
             _productService = productService;
         }
 
@@ -32,6 +33,13 @@ namespace ReactVeloShop.Server.Controllers.Api
         {
             var products = await _productService.GetProductDataBySubcategoryWithPagination(subcategoryId, pageNumber, pageSize);
             return Ok(products);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateProduct([FromBody]CreateProductData data)
+        {
+            var product = await _productService.CreateProduct(data);
+            return Ok(product);
         }
     }
 }

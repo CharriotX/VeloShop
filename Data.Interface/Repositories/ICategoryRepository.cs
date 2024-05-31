@@ -9,6 +9,7 @@ namespace Data.Interface.Repositories
         Task<CategoryData> GetCategoryDataByName(string name);
         Task<CategoryWithSubcategoriesData> GetCategoryDataById(int id);
         Task<List<CategoryWithSubcategoriesData>> GetCategoriesWithSubcategories();
-        Task<CategoryWithSubcategoriesData> GetAllSubcategoriesOfTheCategory(int categoryId);
+        Task<CategoryWithSubcategoriesData> GetAllSubcategoriesOfTheCategory(int id);
+        Task<CategoryDataForAddProduct> GetCategoryDataForAddProduct(int id);
     }
 }

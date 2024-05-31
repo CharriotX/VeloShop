@@ -1,4 +1,5 @@
-﻿import { useContext, useState } from "react";
+﻿/* eslint-disable react-refresh/only-export-components */
+import { useContext, useState } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { Context } from "../main";
 import { observer } from "mobx-react-lite";

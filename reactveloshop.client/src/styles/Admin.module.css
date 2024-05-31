@@ -1,0 +1,17 @@
+.addButtons {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+.addButtons button{
+    width: 300px;
+    border-radius: 25px;
+    background: white;
+    color: indigo;
+    font-size: 18px;
+}
+    .addButtons a {
+        color: indigo;
+    }
+

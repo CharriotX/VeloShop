@@ -30,6 +30,7 @@ namespace Data.Sql
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new TokenConfiguration());
+            modelBuilder.ApplyConfiguration(new BrandConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

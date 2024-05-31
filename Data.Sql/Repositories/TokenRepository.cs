@@ -72,7 +72,7 @@ namespace Data.Sql.Repositories
         public async Task SaveToken(int userId, string token)
         {
             var user = await _userRepository.GetById(userId);
-            user.RefreshToken = token;
+            user.Token.RefreshToken = token;
 
             await _webContext.SaveChangesAsync();
         }
@@ -83,7 +83,7 @@ namespace Data.Sql.Repositories
 
             return new TokensData
             {
-                RefreshToken = user.RefreshToken
+                RefreshToken = user.Token.RefreshToken
             };
         }
     }

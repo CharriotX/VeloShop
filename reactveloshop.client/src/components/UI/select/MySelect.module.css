@@ -1,0 +1,9 @@
+select {
+    font: inherit;
+    letter-spacing: inherit;
+    word-spacing: inherit;
+    width: 250px;
+    border-radius: 5px;
+    padding: 2px;
+    border: 1px solid indigo;
+}

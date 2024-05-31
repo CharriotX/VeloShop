@@ -17,6 +17,10 @@ namespace Data.Sql.Configuration
             builder
                 .HasMany(c => c.Specifications)
                 .WithOne(s => s.Category);
+
+            builder
+                .HasMany(c => c.Brands)
+                .WithOne(b => b.Category);
         }
     }
 }

@@ -25,17 +25,25 @@ namespace Data.Services.Services
 
         public async Task<TokensWithUserData> Login(string email, string password)
         {
-            var userData = await _userRepository.GetByEmail(email);
-            var verifyPass = _passwordHasher.Verify(password, userData.PasswordHash);
+            var user = await _userRepository.GetByEmail(email);
+            var verifyPass = _passwordHasher.Verify(password, user.PasswordHash);
 
             if (verifyPass == false)
             {
                 return null;
             }
 
+            var userData = new UserData
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Username = user.Username,
+                Role = user.Role,
+            };
+
             var tokens = _jwtProvider.GenerateTokens(userData);
 
-            var newTokens = _tokenRepository.SetToken(userData.Id, tokens.RefreshToken);
+            var newTokens = await _tokenRepository.SetToken(userData.Id, tokens.RefreshToken);
 
             if (newTokens == null)
             {
@@ -87,13 +95,21 @@ namespace Data.Services.Services
 
         public  async Task<TokensWithUserData> UpdateRefreshToken(string username, string refreshToken)
         {
-            var userData = await _userRepository.GetByUsername(username);
-            var savedUserToken = userData.RefreshToken;
+            var user = await _userRepository.GetByUsername(username);
+            var savedUserToken = user.Token.RefreshToken;
 
             if (refreshToken != savedUserToken)
             {
                 return null;
             }
+
+            var userData = new UserData
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Username = user.Username,
+                Role = user.Role,
+            };
 
             var newJwtTokens = _jwtProvider.GenerateTokens(userData);
 

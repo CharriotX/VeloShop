@@ -33,7 +33,8 @@ function CatalogIdPage() {
 
     const [fetchProducts, isProductsLoading, productsError] = useFetching(async (categoryId, page) => {
         const response = await ProductService.getAllProductsByCategory(categoryId, page);
-        setProducts([...products, ...response.data.data])
+        setProducts([...products, ...response.data.data.products])
+        console.log(response)
         setTotalPages(response.data.totalPages)
         setTotalRecords(response.data.totalRecords)
     })

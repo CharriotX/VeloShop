@@ -1,7 +1,6 @@
 ﻿using Data.Interface.DataModels.Categories;
 using Data.Interface.DataModels.PaginationData;
 using Data.Interface.DataModels.Products;
-using Data.Interface.DataModels.Specifications;
 using Data.Interface.DataModels.Subcategories;
 using Data.Interface.Models;
 using Data.Interface.Repositories;
@@ -35,18 +34,24 @@ namespace Data.Services.Services
             return data;
         }
 
-        public async Task<PageResponse<ProductData>> GetProductDataByCategoryWithPagination(int categoryId, int pageNumber, int pageSize)
+        public async Task<PageResponse<CategoryIdPageResponse>> GetProductDataByCategoryWithPagination(int categoryId, int pageNumber, int pageSize)
         {
             var data = await _productRepository.GetProductsByCategoryWithPagination(categoryId, pageNumber, pageSize);
+
             return data;
+            
         }
 
-        public async Task<PageResponse<ProductData>> GetProductDataBySubcategoryWithPagination(int subcategoryId, int pageNumber, int pageSize)
+        public async Task<PageResponse<SubcategoryIdPagePesponse>> GetProductDataBySubcategoryWithPagination(int subcategoryId, int pageNumber, int pageSize)
         {
             var data = await _productRepository.GetProductsBySubcategoryWithPagination(subcategoryId, pageNumber, pageSize);
             return data;
         }
 
-
+        public async Task<ProductData> CreateProduct(CreateProductData data)
+        {
+            var createdProduct = await _productRepository.CreateProduct(data);
+            return createdProduct;
+        } 
     }
 }

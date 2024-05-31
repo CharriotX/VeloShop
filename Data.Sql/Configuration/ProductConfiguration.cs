@@ -1,7 +1,6 @@
 ﻿using Data.Interface.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 
 namespace Data.Sql.Configuration
 {
@@ -22,6 +21,10 @@ namespace Data.Sql.Configuration
             builder
                .HasOne(p => p.Subcategory)
                .WithMany(c => c.Products);
+
+            builder
+                .HasOne(p => p.Brand)
+                .WithMany(c => c.Products);
 
             builder
                 .HasMany(p => p.Specifications)

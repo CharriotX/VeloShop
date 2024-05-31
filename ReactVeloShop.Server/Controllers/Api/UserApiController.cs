@@ -85,6 +85,12 @@ namespace ReactVeloShop.Server.Controllers.Api
         public async Task<ActionResult> RefreshToken(AccessTokenData accessTokenData)
         {
             var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["refresh"];
+
+            if(refreshToken == null)
+            {
+                return Unauthorized();
+            }
+
             var principal = _jwtProvider.GetPrincipalFromExpiredToken(accessTokenData.AccessToken);
             var username = principal.Identity?.Name;
 
