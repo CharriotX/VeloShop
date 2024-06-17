@@ -1,0 +1,16 @@
+.form{
+
+}
+
+.brandInput{
+    padding: 5px 2px;
+}
+.brandList{
+    display: flex;
+    flex-wrap:wrap;
+    margin: 10px 2px 5px 2px;
+
+}
+.brandList div{
+    padding: 3px;
+}

@@ -1,0 +1,42 @@
+.table {
+    width: 100%;
+    margin-top: 30px;
+    border-collapse: collapse;
+}
+
+.tableRow {
+    max-height: 30px;
+    text-align: center;
+    border: 1px solid #0094ff;
+}
+
+    .tableRow td {
+        border: 1px solid #0094ff;
+        padding: 8px;
+    }
+
+.headerTableCell {
+    border: 1px solid #0094ff;
+    text-align: center;
+    padding: 8px;
+}
+
+.actionButtons{
+    display:flex;
+    justify-content: center;
+    margin: -1px;
+    width: inherit;
+}
+
+    .actionButtons button {
+        display: flex;
+        align-items: center;
+        width: 70px;
+        margin: 2px;
+    }
+
+    .actionButtons a {
+        display: block;
+        color:white;
+        width: 100%;
+    }

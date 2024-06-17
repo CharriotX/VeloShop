@@ -11,6 +11,5 @@
   <ItemGroup>
     <Folder Include="src\router\" />
     <Folder Include="src\http\" />
-    <Folder Include="src\store\" />
   </ItemGroup>
 </Project>

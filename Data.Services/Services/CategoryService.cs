@@ -30,33 +30,20 @@ namespace Data.Services.Services
         public async Task<List<CategoryWithSubcategoriesData>> GetAllCategoriesWithSubcategories()
         {
             var data = await _categoryRepository.GetCategoriesWithSubcategories();
-            var models = data.Select(x => new CategoryWithSubcategoriesData()
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Subcategories = x.Subcategories.Select(x => new SubcategoryData
-                {
-                    Id = x.Id,
-                    Name = x.Name
-                }).ToList()
-            }).ToList();
-
-            return models;
+            
+            return data;
         }
 
         public async Task<CategoryWithSubcategoriesData> GetCategoryById(int id)
         {
-            var category = await _categoryRepository.GetCategoryDataById(id);
-            var data = new CategoryWithSubcategoriesData
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Subcategories = category.Subcategories.Select(x => new SubcategoryData
-                {
-                    Id = x.Id,
-                    Name = x.Name
-                }).ToList()
-            };
+            var data = await _categoryRepository.GetCategoryDataById(id);            
+
+            return data;
+        }
+
+        public async Task<CategoryDataForAddProduct> GetCategoryDataForAddProduct(int id)
+        {
+            var data = await _categoryRepository.GetCategoryDataForAddProduct(id);
 
             return data;
         }

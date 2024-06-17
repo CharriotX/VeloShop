@@ -1,5 +1,6 @@
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.AuthService;
+using Data.Services.Interfaces.BrandsService;
 using Data.Services.Interfaces.CategoriesService;
 using Data.Services.Interfaces.ProductsService;
 using Data.Services.Interfaces.SubcategoriesService;
@@ -9,7 +10,6 @@ using Data.Sql;
 using Data.Sql.Repositories;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
@@ -84,6 +84,11 @@ builder.Services.AddScoped<IUserService>(x =>
 builder.Services.AddScoped<IProductService>(x =>
     new ProductService(
         x.GetService<IProductRepository>()
+         )) ;
+
+builder.Services.AddScoped<IBrandService>(x =>
+    new BrandService(
+        x.GetService<IBrandRepository>()
          ));
 
 builder.Services.AddScoped<ICategoryService>(x =>
@@ -99,13 +104,21 @@ builder.Services.AddScoped<IAuthService>(x =>
         x.GetService<IPasswordHasher>()));
 
 builder.Services.AddScoped<IProductSpecificationRepository>(x =>
-    new ProductSpecificationRepository(x.GetService<WebContext>()));
+    new ProductSpecificationRepository(x.GetService<WebContext>(), x.GetService<ISpecificationRepository>()));
 builder.Services.AddScoped<ICategoryRepository>(x => new CategoryRepository(x.GetService<WebContext>()));
-builder.Services.AddScoped<IProductRepository>(x => new ProductRepository(x.GetService<WebContext>(), x.GetService<ICategoryRepository>(), x.GetService<ISpecificationRepository>()));
+
+builder.Services.AddScoped<IProductRepository>(x => new ProductRepository(x.GetService<WebContext>(),
+    x.GetService<ICategoryRepository>(),
+    x.GetService<ISpecificationRepository>(),
+    x.GetService<IBrandRepository>(),
+    x.GetService<IProductSpecificationRepository>(),
+    x.GetService<ISubcategoryRepository>()));
+
 builder.Services.AddScoped<ISubcategoryRepository>(x => new SubcategoryRepository(x.GetService<WebContext>(), x.GetService<ICategoryRepository>()));
 builder.Services.AddScoped<ISpecificationRepository>(x => new SpecificationRepository(x.GetService<WebContext>()));
 builder.Services.AddScoped<IUserRepository>(x => new UserRepository(x.GetService<WebContext>()));
 builder.Services.AddScoped<ITokenRepository>(x => new TokenRepository(x.GetService<WebContext>(), x.GetService<IUserRepository>()));
+builder.Services.AddScoped<IBrandRepository>(x => new BrandRepository(x.GetService<WebContext>(), x.GetService<ICategoryRepository>()));
 
 var app = builder.Build();
 SeedData.Seed(app);

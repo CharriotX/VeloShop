@@ -29,5 +29,13 @@ namespace ReactVeloShop.Server.Controllers.Api
             var model = await _categoryService.GetCategoryById(id);
             return Ok(model);
         }
+
+        [HttpGet]
+        [Route("/api/category/data/{id}")]
+        public async Task<IActionResult> GetCategoryDataForAddProduct(int id)
+        {
+            var model = await _categoryService.GetCategoryDataForAddProduct(id);
+            return Ok(model);
+        }
     }
 }

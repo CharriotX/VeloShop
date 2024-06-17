@@ -1,0 +1,21 @@
+.pageWrapper{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+.page {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: 1px solid #0094ff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.currentPage {
+    padding: 5px 10px;
+    margin: 0 5px;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #0094ff;
+}

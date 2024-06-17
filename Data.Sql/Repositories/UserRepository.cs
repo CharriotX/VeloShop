@@ -21,50 +21,24 @@ namespace Data.Sql.Repositories
             return await _dbSet.AnyAsync(x => x.Email == email);
         }
 
-        public async Task<UserData> GetByEmail(string email)
+        public async Task<User> GetByEmail(string email)
         {
-            var user = await _dbSet.Where(x => x.IsActive).FirstOrDefaultAsync(x => x.Email == email);
-            var userData = new UserData
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                PasswordHash = user.PasswordHash,
-                Role = user.Role
-            };
-
-            return userData;
+            var user = await _dbSet.Where(x => x.IsActive).Include(x => x.Token).FirstOrDefaultAsync(x => x.Email == email);
+            
+            return user;
         }
 
-        public async Task<UserData> GetById(int id)
+        public async Task<User> GetById(int id)
         {
-            var user = await _dbSet.Where(x => x.IsActive).FirstOrDefaultAsync(x => x.Id == id);
-            var userData = new UserData
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                PasswordHash = user.PasswordHash,
-                Role = user.Role
-            };
-
-            return userData;
+            var user = await _dbSet.Where(x => x.IsActive).Include(x => x.Token).FirstOrDefaultAsync(x => x.Id == id);
+            return user;
         }
 
-        public async Task<UserData> GetByUsername(string username)
+        public async Task<User> GetByUsername(string username)
         {
             var user = await _dbSet.Where(x => x.IsActive).Include(x => x.Token).FirstOrDefaultAsync(x => x.Username == username);
-            var userData = new UserData
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                PasswordHash = user.PasswordHash,
-                Role = user.Role,
-                RefreshToken = user.Token.RefreshToken
-            };
 
-            return userData;
+            return user;
         }
 
         public async Task<CurrentUserData> Create(UserData data)

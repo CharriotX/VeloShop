@@ -22,14 +22,14 @@ namespace Data.Services.Services
 
         public async Task<CurrentUserData> GetUserById(int id)
         {
-            var userData = await _userRepository.Get(id);
+            var user = await _userRepository.Get(id);
 
             return new CurrentUserData
             {
-                Id = userData.Id,
-                Email = userData.Email,
-                Username = userData.Username,
-                Role = userData.Role
+                Id = user.Id,
+                Email = user.Email,
+                Username = user.Username,
+                Role = user.Role
             };
         }
         public async Task<UserWithRefreshTokenData> GetUserByUsername(string username)
@@ -41,7 +41,7 @@ namespace Data.Services.Services
                 UserId = userData.Id,
                 Email = userData.Email,
                 Username = userData.Username,
-                RefreshToken = userData.RefreshToken,
+                RefreshToken = userData.Token.RefreshToken,
                 Role = userData.Role
             };
         }

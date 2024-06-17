@@ -9,8 +9,8 @@ namespace Data.Interface.Repositories
         Task<bool> IsUsernameExist(string username);
         Task<bool> IsEmailExist(string email);
         Task<CurrentUserData> Create(UserData data);
-        Task<UserData> GetByEmail(string email);
-        Task<UserData> GetByUsername(string username);
-        Task<UserData> GetById(int id);        
+        Task<User> GetByEmail(string email);
+        Task<User> GetByUsername(string username);
+        Task<User> GetById(int id);        
     }
 }

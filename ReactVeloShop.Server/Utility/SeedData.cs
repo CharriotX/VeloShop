@@ -19,6 +19,8 @@ namespace ReactVeloShop.Server.Utility
         const string ADMIN_EMAIL = "admin@mail.ru";
         const string ADMIN_PASSWORD = "admin";
 
+        const string DEFAULT_BRAND_NAME = "SeedBrand";
+
         private static List<string> _categories = new List<string> { BIKE_CATEGORY_NAME, ACCESSORY_CATEGORY_NAME, SPARE_CATEGORY_NAME, TOOL_CATEGORY_NAME, EQUIPMENT_CATEGORY_NAME, SCOOTER_CATEGORY_NAME };
         private static List<string> _bikeSubcategories = new List<string> { "Горные велосипеды", "Женские велосипеды", "Детские велосипеды", "Подростковые велосипеды", "Городские велосипеды", "Шоссейные велосипеды", "Складные велосипеды", "Велосипеды BMX", };
         private static List<string> _accessorySubcategories = new List<string> { "Велозамки", "Освещение", "Насосы", "Щитки", "Багажники", "Велокомпьютеры", "Велосумки", "Грипсы", "Подножки" };
@@ -193,17 +195,33 @@ namespace ReactVeloShop.Server.Utility
         public static async Task SeedProducts(IServiceScope scope)
         {
             var productRepository = scope.ServiceProvider.GetService<IProductRepository>();
+            var brandRepository = scope.ServiceProvider.GetService<IBrandRepository>();
+            var categoryRepository = scope.ServiceProvider.GetService<ICategoryRepository>();
+
+            var bikeCategory = await categoryRepository.GetCategoryDataByName(BIKE_CATEGORY_NAME);
+
+            if(!await brandRepository.Any())
+            {
+                var brand = new Brand()
+                {
+                    Name = DEFAULT_BRAND_NAME,
+                    IsActive=true,
+                    Category = await categoryRepository.Get(bikeCategory.Id)
+                };
+
+                await brandRepository.Add(brand);
+            }
 
             if (!await productRepository.Any())
             {
-                var categoryRepository = scope.ServiceProvider.GetService<ICategoryRepository>();
                 var subcategoryRepository = scope.ServiceProvider.GetService<ISubcategoryRepository>();
 
                 var allCategories = await categoryRepository.GetCategoriesWithSubcategories();
+                var defaultBrand = await brandRepository.GetBrandByName(DEFAULT_BRAND_NAME);
 
                 foreach (var category in allCategories)
                 {
-                    var subcategories = categoryRepository.GetAllSubcategoriesOfTheCategory(category.Id);
+                    var subcategories = await categoryRepository.GetAllSubcategoriesOfTheCategory(category.Id);
                     foreach (var subcategory in category.Subcategories)
                     {
                         for (int i = 0; i < 2; i++)
@@ -211,7 +229,7 @@ namespace ReactVeloShop.Server.Utility
                             var productModel = new Product()
                             {
                                 Name = subcategory.Name,
-                                BrandName = "Brand Name",
+                                Brand = await brandRepository.Get(defaultBrand.Id),
                                 Description = "Description",
                                 Price = 100,
                                 Category = categoryRepository.Get(category.Id).Result,
