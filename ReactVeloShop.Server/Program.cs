@@ -10,7 +10,6 @@ using Data.Sql;
 using Data.Sql.Repositories;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
@@ -85,7 +84,7 @@ builder.Services.AddScoped<IUserService>(x =>
 builder.Services.AddScoped<IProductService>(x =>
     new ProductService(
         x.GetService<IProductRepository>()
-         ));
+         )) ;
 
 builder.Services.AddScoped<IBrandService>(x =>
     new BrandService(

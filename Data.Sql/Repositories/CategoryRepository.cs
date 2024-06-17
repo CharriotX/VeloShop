@@ -1,5 +1,4 @@
-﻿using System;
-using Data.Interface.DataModels.Brands;
+﻿using Data.Interface.DataModels.Brands;
 using Data.Interface.DataModels.Categories;
 using Data.Interface.DataModels.Specifications;
 using Data.Interface.DataModels.Subcategories;

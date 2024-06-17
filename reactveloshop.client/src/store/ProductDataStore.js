@@ -1,12 +1,12 @@
-import { makeAutoObservable} from 'mobx';
+import { makeAutoObservable, toJS } from 'mobx';
 import CategoryService from '../services/CategoryService';
 
-export default class CreateProductStore {
+export default class ProductDataStore {
 
     brand = {};
     brands = [];
 
-    category = {};
+    category = 1;
     categories = [];
 
     subcategory = {};
@@ -45,12 +45,10 @@ export default class CreateProductStore {
         this.specifications = specifications;
     }
 
-
-
     async getCategoryDataForAddProduct(id) {
         try {
             const response = await CategoryService.getCategoryDataForAddProduct(id);
-            this.setSelectedCaregory(response.data);
+            this.setSelectedCaregory(response.data.id);
             this.setSubcategories(response.data.subcategories);
             this.setBrands(response.data.brands);
             this.setSpecifications(response.data.specifications);
@@ -61,6 +59,6 @@ export default class CreateProductStore {
 
     async getAllCategories() {
         const response = await CategoryService.getAll();
-        this.setCategories(response.data)
+        this.setCategories(response.data);
     }
 }

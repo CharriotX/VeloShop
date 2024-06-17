@@ -1,4 +1,6 @@
-﻿using Data.Interface.DataModels.Categories;
+﻿using Data.Interface.DataModels.Brands;
+using Data.Interface.DataModels.Categories;
+using Data.Interface.DataModels.Helpers;
 using Data.Interface.DataModels.PaginationData;
 using Data.Interface.DataModels.Products;
 using Data.Interface.DataModels.Specifications;
@@ -6,6 +8,7 @@ using Data.Interface.DataModels.Subcategories;
 using Data.Interface.Models;
 using Data.Interface.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Data.Sql.Repositories
 {
@@ -30,17 +33,71 @@ namespace Data.Sql.Repositories
             _subcategoryRepository = subcategoryRepository;
         }
 
+        public async Task<PagedList<AdminProductData>> GetAll(ProductQueryObject query)
+        {
+            IQueryable<Product> productQuery = _dbSet
+                .Where(x => x.IsActive)
+                .Include(x => x.Subcategory)
+                .Include(x => x.Category)
+                .Include(x => x.Brand);
+
+            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            {
+                productQuery = productQuery.Where(p => p.Name.Contains(query.SearchTerm));
+            }
+
+            if (query.SortOrder.ToLower() == "desc")
+            {
+                productQuery = productQuery.OrderByDescending(GetSortedProperty(query));
+            }
+            else
+            {
+                productQuery = productQuery.OrderBy(GetSortedProperty(query));
+            }
+
+            var productsData = await productQuery
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(x => new AdminProductData
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Price = x.Price,
+                    BrandName = x.Brand.Name,
+                    SubcategoryName = x.Subcategory.Name
+                }).ToListAsync();
+
+            return new PagedList<AdminProductData>
+            {
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize,
+                TotalRecords = productQuery.Count(),
+                TotalPages = (int)Math.Ceiling((decimal)productQuery.Count() / (decimal)query.PageSize),
+                Items = productsData
+            };
+        }
+
         public async Task<ProductData> GetProductData(int id)
         {
-            var product = await _dbSet.Include(x => x.Category).ThenInclude(x => x.Subcategories).Include(x => x.Specifications).Include(x => x.ProductSpecifications).FirstOrDefaultAsync(x => x.Id == id);
+            var product = await _dbSet
+                .Include(x => x.Category)
+                .ThenInclude(x => x.Subcategories)
+                .Include(x => x.Specifications)
+                .Include(x => x.Brand)
+                .Include(x => x.ProductSpecifications)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             return new ProductData
             {
                 Id = product.Id,
                 Name = product.Name,
-                //BrandName = product.BrandName,
                 Description = product.Description,
                 Price = product.Price,
+                Brand = new BrandData
+                {
+                    Id = product.Brand.Id,
+                    Name = product.Brand.Name
+                },
                 Category = new CategoryData
                 {
                     Id = product.Category.Id,
@@ -61,14 +118,23 @@ namespace Data.Sql.Repositories
 
         public async Task<List<ProductData>> GetProductsBySubcategory(int subcategoryId)
         {
-            var products = await _dbSet.Include(x => x.Specifications).Include(x => x.Category).Include(x => x.Subcategory).Where(x => x.Subcategory.Id == subcategoryId).ToListAsync();
+            var products = await _dbSet.Include(x => x.Specifications)
+                .Include(x => x.Category)
+                .Include(x => x.Subcategory)
+                .Include(x => x.Brand)
+                .Where(x => x.Subcategory.Id == subcategoryId)
+                .ToListAsync();
             var productsData = products.Select(x => new ProductData
             {
                 Id = x.Id,
                 Name = x.Name,
-               //BrandName = x.BrandName,
                 Description = x.Description,
                 Price = x.Price,
+                Brand = new BrandData
+                {
+                    Id = x.Brand.Id,
+                    Name = x.Brand.Name
+                },
                 Category = new CategoryData
                 {
                     Id = x.Category.Id,
@@ -87,15 +153,25 @@ namespace Data.Sql.Repositories
         public async Task<List<ProductData>> GetAllProductsByCategory(int categoryId)
         {
             var category = await _categoryRepository.Get(categoryId);
-            var products = await _dbSet.Include(x => x.Category).ThenInclude(x => x.Subcategories).Include(x => x.Specifications).Where(x => x.Category == category).ToListAsync();
+            var products = await _dbSet
+                .Include(x => x.Category)
+                .ThenInclude(x => x.Subcategories)
+                .Include(x => x.Specifications)
+                .Include(x => x.Brand)
+                .Where(x => x.Category == category)
+                .ToListAsync();
 
             var productsData = products.Select(x => new ProductData
             {
                 Id = x.Id,
                 Name = x.Name,
-                //BrandName = x.BrandName,
                 Description = x.Description,
                 Price = x.Price,
+                Brand = new BrandData
+                {
+                    Id = x.Brand.Id,
+                    Name = x.Brand.Name
+                },
                 Category = new CategoryData
                 {
                     Id = x.Category.Id,
@@ -115,6 +191,7 @@ namespace Data.Sql.Repositories
         {
             var totalRecords = await _dbSet.Where(x => x.Category.Id == categoryId).CountAsync();
             var products = await _dbSet
+                .Where(x => x.IsActive)
                 .Include(x => x.Subcategory)
                 .Include(x => x.Category)
                 .Include(x => x.Brand)
@@ -123,7 +200,7 @@ namespace Data.Sql.Repositories
                 .Take(pageSize)
                 .ToListAsync();
 
-            
+
             var categoryWithSubcategories = await _categoryRepository.GetAllSubcategoriesOfTheCategory(categoryId);
 
             var data = new CategoryIdPageResponse
@@ -132,9 +209,13 @@ namespace Data.Sql.Repositories
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    BrandName = x.Brand.Name,
                     Description = x.Description,
                     Price = x.Price,
+                    Brand = new BrandData
+                    {
+                        Id = x.Brand.Id,
+                        Name = x.Brand.Name
+                    },
                     Category = new CategoryData
                     {
                         Id = x.Category.Id,
@@ -172,6 +253,7 @@ namespace Data.Sql.Repositories
         {
             var totalRecords = await _dbSet.AsNoTracking().Where(x => x.Subcategory.Id == subcategoryId).CountAsync();
             var products = await _dbSet
+                .Where(x => x.IsActive)
                 .Include(x => x.Specifications)
                 .Include(x => x.Category)
                 .Include(x => x.Subcategory)
@@ -188,9 +270,13 @@ namespace Data.Sql.Repositories
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    BrandName = x.Brand.Name,
                     Description = x.Description,
                     Price = x.Price,
+                    Brand = new BrandData
+                    {
+                        Id = x.Brand.Id,
+                        Name = x.Brand.Name
+                    },
                     Category = new CategoryData
                     {
                         Id = x.Category.Id,
@@ -230,11 +316,12 @@ namespace Data.Sql.Repositories
                 Brand = await _brandRepository.Get(data.BrandId),
                 Category = await _categoryRepository.Get(data.CategoryId),
                 Subcategory = await _subcategoryRepository.Get(data.SubcategoryId),
+                IsActive = true
             };
 
             await Add(model);
 
-            if(data.ProductSpecifications.Count == 0)
+            if (data.ProductSpecifications.Count == 0)
             {
                 await _productSpecificationRepository.AddSpecificationsToProduct(data.ProductSpecifications, model.Id);
             }
@@ -242,6 +329,77 @@ namespace Data.Sql.Repositories
             var createdProduct = await GetProductData(model.Id);
 
             return createdProduct;
+        }
+
+        public async Task UpdateProduct(CreateProductData data)
+        {
+            var product = await _dbSet
+                .Where(x => x.Id == data.Id)
+                .ExecuteUpdateAsync(p => p
+                    .SetProperty(x => x.Name, data.Name)
+                    .SetProperty(x => x.Price, data.Price)
+                    .SetProperty(x => x.Description, data.Description));
+        }
+
+        public async Task UpdateProductBrand(int productId, int brandId)
+        {
+            var brand = await _brandRepository.Get(brandId);
+
+            var product = await _dbSet
+                .Include(x => x.Brand)
+                .FirstOrDefaultAsync(x => x.Id == productId);
+
+            product.Brand = brand;
+            await _webContext.SaveChangesAsync();
+        }
+        public async Task UpdateProductCategory(int productId, int categoryId, int subcategoryId)
+        {
+            var subcategory = await _subcategoryRepository.Get(subcategoryId);
+            var category = await _categoryRepository.Get(categoryId);
+
+            var product = await _dbSet
+                .Include(x => x.Category)
+                .Include(x => x.Subcategory)
+                .FirstOrDefaultAsync(x => x.Id == productId);
+
+            product.Category = category;
+            product.Subcategory = subcategory;
+
+            await _webContext.SaveChangesAsync();
+        }
+        public async Task UpdateProductSpecifications(int productId, List<ProductSpecificationData> specifications)
+        {
+            var product = await _dbSet
+                .Include(x => x.ProductSpecifications)
+                .FirstOrDefaultAsync(x => x.Id == productId);
+
+            for (int i = 0; i < product.ProductSpecifications.Count; i++)
+            {
+                if (product.ProductSpecifications[i].Value != specifications[i].Value)
+                {
+                    product.ProductSpecifications[i].Value = specifications[i].Value;
+                }
+            }
+
+            await _webContext.SaveChangesAsync();
+        }
+        public async Task DeleteProduct(int id)
+        {
+            var product = await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
+            product.IsActive = false;
+            _webContext.SaveChanges();
+        }
+
+        private static Expression<Func<Product, object>> GetSortedProperty(ProductQueryObject queryObject)
+        {
+            return queryObject.SortColumn?.ToLower() switch
+            {
+                "brand" => product => product.Brand.Name,
+                "category" => product => product.Category.Name,
+                "price" => product => product.Price,
+                "name" => product => product.Name,
+                _ => product => product.Id,
+            };
         }
     }
 }

@@ -5,7 +5,7 @@ export default class CreateBrandStore {
     brand = {};
     brands = [];
 
-    category = {};
+    category = 1;
     categories = [];
     constructor() {
         makeAutoObservable(this)
@@ -20,18 +20,17 @@ export default class CreateBrandStore {
     }
 
     setSelectedCaregory(category) {
-        this.category = category;
+        this.category = Number(category);
     }
 
     setCategories(categories) {
         this.categories = categories;
     }
 
-
     async getAllBrandsByCategory(id) {
         try {
             const response = await CategoryService.getCategoryDataForAddProduct(id);
-            this.setSelectedCaregory(response.data);
+            this.setSelectedCaregory(response.data.id);
             this.setBrands(response.data.brands);
         } catch (e) {
             console.log(e)

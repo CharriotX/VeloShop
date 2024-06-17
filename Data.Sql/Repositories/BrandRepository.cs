@@ -61,5 +61,20 @@ namespace Data.Sql.Repositories
             await Add(model);
             return await GetBrandByName(model.Name);
         }
+
+        public async Task<BrandData> UpdateBrand(BrandData data)
+        {
+            var category = await _categoryRepository.Get(data.CategoryId);
+
+            var model = new Brand()
+            {
+                IsActive = true,
+                Name = data.Name,
+                Category = category,
+            };
+
+            await Add(model);
+            return await GetBrandByName(model.Name);
+        }
     }
 }

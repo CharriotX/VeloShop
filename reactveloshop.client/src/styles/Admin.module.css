@@ -4,14 +4,24 @@
     margin: 10px;
 }
 
-.addButtons button{
-    width: 300px;
-    border-radius: 25px;
-    background: white;
-    color: indigo;
-    font-size: 18px;
-}
+    .addButtons button {
+        width: 300px;
+        border-radius: 25px;
+        background: white;
+        color: indigo;
+        font-size: 18px;
+    }
+
     .addButtons a {
         color: indigo;
     }
 
+
+.topBar {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 5px;
+}

@@ -1,12 +1,10 @@
-﻿using Data.Interface.DataModels.Brands;
-using Data.Interface.DataModels.Categories;
-using Data.Interface.DataModels.Specifications;
-using Data.Interface.DataModels.Subcategories;
+﻿using Data.Interface.DataModels.Specifications;
 
 namespace Data.Interface.DataModels.Products
 {
     public class CreateProductData
     {
+        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }

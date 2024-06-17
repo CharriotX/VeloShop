@@ -12,21 +12,21 @@ import classes from '../styles/AddProductPage.module.css'
 
 function AddProductPage() {
 
-    const { createProductStore } = useContext(Context);
-    const [specifications, setSpecifications] = useState([...createProductStore.specifications]);
+    const { productDataStore } = useContext(Context);
+    const [specifications, setSpecifications] = useState([...productDataStore.specifications]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
 
-
     useEffect(() => {
-        createProductStore.getAllCategories()
-        createProductStore.getCategoryDataForAddProduct(createProductStore.category)
-        setSpecifications(toJS(createProductStore.specifications))
-    }, [createProductStore.category])
+        productDataStore.getAllCategories()
+        productDataStore.getCategoryDataForAddProduct(toJS(productDataStore.category))
+        setSpecifications(toJS(productDataStore.specifications))
+    }, [productDataStore.category])
 
     const changeSpecifications = (e, id) => {
-        const { value } = e.target;
+        const { value } = e.target
+
         setSpecifications((spec) =>
             spec?.map((list, index) =>
                 index === id ? { ...list, value: value } : list
@@ -41,9 +41,9 @@ function AddProductPage() {
             name: name,
             description: description,
             price: price,
-            brandId: Number(createProductStore.brand),
-            categoryId: createProductStore.category.id,
-            subcategoryId: Number(createProductStore.subcategory),
+            brandId: Number(productDataStore.brand),
+            categoryId: productDataStore.category.id,
+            subcategoryId: Number(productDataStore.subcategory),
             productSpecifications: specifications
         }
 
@@ -61,8 +61,8 @@ function AddProductPage() {
                             <div>
                                 <MySelect
                                     defaultValue="Выберите категорию"
-                                    options={toJS(createProductStore.categories)}
-                                    onChange={(e) => createProductStore.setSelectedCaregory(e)}
+                                    options={toJS(productDataStore.categories)}
+                                    onChange={(e) => productDataStore.setSelectedCaregory(e)}
                                 ></MySelect>
                             </div>
                         </div>
@@ -73,8 +73,8 @@ function AddProductPage() {
                             <div>
                                 <MySelect
                                     defaultValue="Выберите подкатегорию"
-                                    options={toJS(createProductStore.subcategories)}
-                                    onChange={(e) => createProductStore.setSelectedSubcaregory(e)}
+                                    options={toJS(productDataStore.subcategories)}
+                                    onChange={(e) => productDataStore.setSelectedSubcaregory(e)}
                                 ></MySelect>
                             </div>
                         </div>
@@ -85,13 +85,13 @@ function AddProductPage() {
                             <div>
                                 <MySelect
                                     defaultValue="Выберите бренд"
-                                    options={toJS(createProductStore.brands)}
-                                    onChange={(e) => createProductStore.setSelectedBrand(e)}
+                                    options={toJS(productDataStore.brands)}
+                                    onChange={(e) => productDataStore.setSelectedBrand(e)}
                                 ></MySelect>
                             </div>
                         </div>
                     </div>
-                    <div className={classes.inputsField}> 
+                    <div className={classes.inputsField}>
                         <div>
                             <MyInput
                                 placeholder="Введите название"
@@ -116,8 +116,8 @@ function AddProductPage() {
                             ></MyInput>
                         </div>
                     </div>
-                    {toJS(createProductStore.specifications.length)
-                        && <table>
+                    {productDataStore.specifications.length
+                        ? <table>
                             <caption>Введите характеристики</caption>
                             <thead>
                                 <tr>
@@ -126,7 +126,7 @@ function AddProductPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {createProductStore.specifications.map((spec, i) =>
+                                {productDataStore.specifications.map((spec, i) =>
                                     <tr key={spec.id}>
                                         <th>{spec.name}</th>
                                         <th><MyInput onChange={(e) => changeSpecifications(e, i)} /></th>
@@ -134,10 +134,11 @@ function AddProductPage() {
                                 )}
                             </tbody>
                         </table>
+                        : <div> </div>
                     }
                     <div className={classes.submitBtn}>
                         <MyButton type="submit">Создать</MyButton>
-                    </div>                    
+                    </div>
                 </form>
             </div>
         </>

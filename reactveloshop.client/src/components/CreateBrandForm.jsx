@@ -27,12 +27,12 @@ function CreateBrandForm({ setVisible }) {
         e.preventDefault();
         const data = {
             name: name,
-            categoryId: toJS(createBrandStore.category.id)
+            categoryId: toJS(createBrandStore.category)
         }
         await BrandService.createBrand(data);
         createBrandStore.setCategories([]);
-        createBrandStore.setSelectedCaregory({});
-        setName('');
+        createBrandStore.setSelectedCaregory(1);
+        setName('')
         setVisible(false)
     }
 
@@ -53,7 +53,7 @@ function CreateBrandForm({ setVisible }) {
                     <div>
                         Введите название
                     </div>
-                    <MyInput onChange={(e) => setName(e.target.value)}></MyInput>
+                    <MyInput value={ name} onChange={(e) => setName(e.target.value)}></MyInput>
                 </div>
                 <MyButton type="submit">Создать</MyButton>
             </form>

@@ -1,25 +1,25 @@
 import { makeAutoObservable } from 'mobx';
-import AuthService from '../services/AuthService';
-import axios from 'axios';
+import ProductService from '../services/ProductService';
 
-export default class DeviceStore {
-    
+
+export default class ProductStore {
+    product = {};
     constructor() {
-        this._category = {};
-        this._brands = [];
-        this._products = [];
+
         makeAutoObservable(this)
     }
 
-    setCaregory(category) {
-        this._category = category;
+    setProduct(product) {
+        this._product = product;
     }
 
-    setBrands(brands) {
-        this._brands = brands;
-    }
-
-    setProducts(products) {
-        this._products = products;
+    async getProduct(id) {
+        try {
+            const response = await ProductService.getProduct(id);
+            console.log(response)
+            this.setProduct(response.data)
+        } catch (e) {
+            console.log(e)
+        }
     }
 }

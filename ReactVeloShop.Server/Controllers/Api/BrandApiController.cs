@@ -8,7 +8,7 @@ namespace ReactVeloShop.Server.Controllers.Api
     [ApiController]
     [Route("/api/brand")]
     public class BrandApiController : ControllerBase
-    { 
+    {
         private IBrandService _brandService;
         public BrandApiController(IBrandService brandService)
         {

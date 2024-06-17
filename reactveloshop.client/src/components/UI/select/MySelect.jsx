@@ -16,8 +16,8 @@ const MySelect = ({ options, defaultValue, onChange }) => {
     };
 
     return (
-        <select className={classes.mySelect} onChange={handleSelectChange} >
-            <option value="" >{defaultValue}</option>
+        <select defaultValue={defaultValue} className={classes.mySelect} onChange={handleSelectChange} >
+            <option disabled>{defaultValue}</option>
             {options.map(option =>
                 <option key={option.id} value={option.id}>{option.name}</option>
             )}
