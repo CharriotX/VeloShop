@@ -1,5 +1,4 @@
 import axios from "axios";
-import $api from "../http/index";
 
 const baseUrl = 'https://localhost:7245/api/category/';
 
@@ -11,7 +10,6 @@ export default class CategoryService {
 
     static async getById(id) {
         const response = await axios.get(baseUrl + id);
-        console.log(id)
         return response;
     }
 

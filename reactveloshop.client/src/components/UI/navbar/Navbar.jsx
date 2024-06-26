@@ -5,6 +5,7 @@ import { useFetching } from "../../../hooks/useFetching";
 import CategoryService from "../../../services/CategoryService";
 import { observer } from "mobx-react-lite";
 import { Context } from "../../../main";
+import CartWidget from "../../CartWidget";
 
 function Navbar() {
 
@@ -26,11 +27,15 @@ function Navbar() {
                 <div className={classes.navbarHeader}>
                     <h2><Link to="/">VELO SHOP</Link></h2>
                     {store.isAuth
-                        ? <div>
+                        ? <div className={classes.loginLinks}>
+                            <CartWidget></CartWidget>
                             <div><Link to="/profile">Profile</Link></div>
                             <div><Link onClick={() => store.logout()}>Logout</Link></div>
                         </div>
-                        : <div><Link to="/login">Login</Link></div>
+                        : <div className={classes.loginLinks}>
+                            <CartWidget></CartWidget>
+                            <Link to="/login">Login</Link>
+                        </div>
                     }
                 </div>
                 <div className={classes.navbarLinks}>

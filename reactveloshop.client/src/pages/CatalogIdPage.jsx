@@ -1,5 +1,5 @@
 ﻿import { useState, useRef } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useFetching } from '../hooks/useFetching';
 import CategoryService from '../services/CategoryService';
 import { useEffect } from 'react';
@@ -20,21 +20,18 @@ function CatalogIdPage() {
     const [totalRecords, setTotalRecords] = useState(0);
     const lastElement = useRef();
 
-    const [fetchCategory, isLoading, error] = useFetching(async (id) => {
+    const [fetchCategory, isCategoryLoading, error] = useFetching(async (id) => {
         const response = await CategoryService.getById(id);
+        setSubcategories(response.data.subcategories)
         setCategory(response.data)
         setCatId(response.data.id)
-    })
-
-    const [fetchSubcategory, isSubcategoryLoading, subError] = useFetching(async (id) => {
-        const response = await CategoryService.getSubcategoriesByCategoryId(id);
-        setSubcategories(response.data)
+        setProducts([]);
+        setPage(1)
     })
 
     const [fetchProducts, isProductsLoading, productsError] = useFetching(async (categoryId, page) => {
         const response = await ProductService.getAllProductsByCategory(categoryId, page);
         setProducts([...products, ...response.data.data.products])
-        console.log(response)
         setTotalPages(response.data.totalPages)
         setTotalRecords(response.data.totalRecords)
     })
@@ -45,7 +42,6 @@ function CatalogIdPage() {
 
     const changingCategoryId = () => {
         if (params.id != catId) {
-            console.log(products)
             setProducts([]);
             setPage(1)
         }
@@ -53,7 +49,6 @@ function CatalogIdPage() {
 
     useEffect(() => {
         fetchCategory(params.id)
-        fetchSubcategory(params.id)
         fetchProducts(params.id, page)
         changingCategoryId()
     }, [params.id, page, catId])
@@ -61,26 +56,26 @@ function CatalogIdPage() {
 
     return (
         <>
-            {isLoading
-                ? <div>Loading</div>
-                : <div style={{ display: "flex", justifyContent: "center" }}>
-                    <h2 className={classes.CategoryTitle}>{category.name}</h2>
-                    <div className={classes.totalRecords}>
-                        <span >{totalRecords}</span>
-                    </div>
-                </div>
-            }
-
-            {isSubcategoryLoading
-                ? <div>Loading</div>
-                : <SubcategoriesList subcategories={subcategories}></SubcategoriesList>
-            }
             <div>
-                {isProductsLoading &&
-                    <div>Loading</div>
+                {isCategoryLoading
+                    ? <div>Loading</div>
+                    : <div>
+                        <div style={{ display: "flex", justifyContent: "center" }}>
+                            <h2 className={classes.CategoryTitle}>{category.name}</h2>
+                            <div className={classes.totalRecords}>
+                                <span >{totalRecords}</span>
+                            </div>
+                        </div>
+                        <SubcategoriesList subcategories={subcategories}></SubcategoriesList>
+                    </div>
                 }
+            </div>
+            <div>
                 <ProductList products={products}></ProductList>
                 <div ref={lastElement} style={{ height: 20, background: "white", marginTop: 300 }}></div>
+                {isProductsLoading ??
+                    <div>Loading</div>
+                }
             </div>
         </>
     );

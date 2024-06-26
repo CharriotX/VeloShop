@@ -31,7 +31,7 @@ export default class ProductService {
                 pageNumber: page
             }
         });
-        console.log(response)
+
         return response;
     }
 
@@ -47,20 +47,16 @@ export default class ProductService {
 
     static async getProductsByCategory(id) {
         const response = await axios.get(`${baseProductUrl}/category/${id}`)
-        console.log(response);
         return response;
     }
 
     static async createProduct(data) {
         try {
-            console.log(data)
-            const response = await axios.post('https://localhost:7245/api/product/', JSON.stringify(data), {
+            await axios.post('https://localhost:7245/api/product/', JSON.stringify(data), {
                 headers: {
                     "Content-Type": "application/json"
                 }
             });
-
-            console.log(response)
         } catch (e) {
             console.log(e)
         }

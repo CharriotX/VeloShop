@@ -15,10 +15,20 @@
     justify-content: space-between;
     align-items: center;
 }
-
-.navbarHeader a{
-    color:white;
+.loginLinks {
+    width: 100px;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
 }
+
+    .loginLinks a {
+        margin-top: 5px;
+    }
+
+    .navbarHeader a {
+        color: white;
+    }
 
 
 

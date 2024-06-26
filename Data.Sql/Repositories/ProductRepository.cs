@@ -257,6 +257,7 @@ namespace Data.Sql.Repositories
                 .Include(x => x.Specifications)
                 .Include(x => x.Category)
                 .Include(x => x.Subcategory)
+                .Include (x => x.Brand)
                 .Where(x => x.Subcategory.Id == subcategoryId)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)

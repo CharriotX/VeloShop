@@ -8,7 +8,6 @@ const TableHeadCell = ({ column, sorting, sortTable }) => {
     const isAscSorting = sorting.column === column && sorting.order === "asc";
 
     const sortOrder = isDescSorting ? "asc" : "desc";
-    
 
     return (
         <th className={classes.headerTableCell} key={column} onClick={() => sortTable({column, order: sortOrder })}>
@@ -16,7 +15,6 @@ const TableHeadCell = ({ column, sorting, sortTable }) => {
             {isDescSorting && <span>▼</span>}
             {isAscSorting && <span>▲</span>}
         </th>
-
     )
 }
 

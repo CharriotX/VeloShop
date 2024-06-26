@@ -13,7 +13,8 @@ namespace Data.Sql
         public DbSet<ProductSpecification> ProductsSpecifications { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Token> Tokens { get; set; }
-
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
         public WebContext() { }
         public WebContext(DbContextOptions<WebContext> options) : base(options) { }

@@ -1,5 +1,4 @@
 import axios from "axios";
-import $api from "../http/index";
 
 const baseUrl = 'https://localhost:7245/api/brand/';
 

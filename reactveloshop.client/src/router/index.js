@@ -9,6 +9,7 @@ import SubcategoryIdPage from "../pages/SubcategoryIdPage";
 import AdminPage from "../pages/AdminPage";
 import AddProductPage from "../pages/AddProductPage";
 import UpdateProductPage from "../pages/UpdateProductPage";
+import CartPage from "../pages/CartPage";
 
 export const routes = [
     { id: 1, path: "/", component: Home },
@@ -21,5 +22,6 @@ export const routes = [
     { id: 8, path: "/subcategory/:id", component: SubcategoryIdPage },
     { id: 9, path: "/admin", component: AdminPage },
     { id: 10, path: "/addProduct", component: AddProductPage },
-    { id: 11, path: "/updateProduct/:id", component: UpdateProductPage }
+    { id: 11, path: "/updateProduct/:id", component: UpdateProductPage },
+    { id: 12, path: "/cart", component: CartPage }
 ]

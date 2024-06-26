@@ -1,6 +1,7 @@
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.AuthService;
 using Data.Services.Interfaces.BrandsService;
+using Data.Services.Interfaces.CartService;
 using Data.Services.Interfaces.CategoriesService;
 using Data.Services.Interfaces.ProductsService;
 using Data.Services.Interfaces.SubcategoriesService;
@@ -10,6 +11,7 @@ using Data.Sql;
 using Data.Sql.Repositories;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
@@ -73,6 +75,17 @@ builder.Services.AddDbContext<WebContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddMemoryCache();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromDays(1);
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.Path = "/";
+});
+
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
@@ -84,7 +97,7 @@ builder.Services.AddScoped<IUserService>(x =>
 builder.Services.AddScoped<IProductService>(x =>
     new ProductService(
         x.GetService<IProductRepository>()
-         )) ;
+         ));
 
 builder.Services.AddScoped<IBrandService>(x =>
     new BrandService(
@@ -93,10 +106,16 @@ builder.Services.AddScoped<IBrandService>(x =>
 
 builder.Services.AddScoped<ICategoryService>(x =>
     new CategoryService(
-        x.GetService<ICategoryRepository>(), 
+        x.GetService<ICategoryRepository>(),
         x.GetService<ISubcategoryRepository>()));
+builder.Services.AddScoped<ICartService>(x =>
+    new CartService(
+            x.GetService<ICartRepository>(),
+            x.GetService<IProductRepository>(),
+            x.GetService<IProductService>()
+        ));
 builder.Services.AddScoped<ISubcategoryService>(x => new SubcategoryService(x.GetService<ISubcategoryRepository>()));
-builder.Services.AddScoped<IAuthService>(x => 
+builder.Services.AddScoped<IAuthService>(x =>
     new AuthService(
         x.GetService<ITokenRepository>(),
         x.GetService<IJwtProvider>(),
@@ -119,6 +138,7 @@ builder.Services.AddScoped<ISpecificationRepository>(x => new SpecificationRepos
 builder.Services.AddScoped<IUserRepository>(x => new UserRepository(x.GetService<WebContext>()));
 builder.Services.AddScoped<ITokenRepository>(x => new TokenRepository(x.GetService<WebContext>(), x.GetService<IUserRepository>()));
 builder.Services.AddScoped<IBrandRepository>(x => new BrandRepository(x.GetService<WebContext>(), x.GetService<ICategoryRepository>()));
+builder.Services.AddScoped<ICartRepository>(x => new CartRepository(x.GetService<WebContext>(), x.GetService<IProductRepository>()));
 
 var app = builder.Build();
 SeedData.Seed(app);
@@ -134,7 +154,7 @@ app.UseCors(builder => builder.WithOrigins("https://localhost:5173", "https://lo
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();   
+    app.UseSwagger();
     app.UseSwaggerUI();
     IdentityModelEventSource.ShowPII = true;
 }
@@ -146,7 +166,7 @@ app.UseHttpsRedirection();
 app.UseCookiePolicy(new CookiePolicyOptions
 {
     MinimumSameSitePolicy = SameSiteMode.Strict,
-    Secure = CookieSecurePolicy.None,
+    Secure = CookieSecurePolicy.Always,
     HttpOnly = HttpOnlyPolicy.Always
 });
 
@@ -154,7 +174,7 @@ app.UseMiddleware<AuthMiddleware>();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseSession();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
