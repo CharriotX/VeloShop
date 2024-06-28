@@ -9,7 +9,7 @@ namespace Data.Services.Interfaces.CartService
         Task<CartData> AddItem(int productId, string cartIdStr);
         Task<CartData> RemoveItem(int productId, string cartIdStr);
         Task<CartData> CreateCart();
-        Task CleanCart(string cartIdStr);
+        Task ClearCart(string cartIdStr);
         Task<CartData> GetCartById(string cartIdStr);
     }
 }

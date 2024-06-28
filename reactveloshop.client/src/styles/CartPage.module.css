@@ -23,7 +23,8 @@
 
 .totalPrice{
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
+    text-align: center;
     margin-top: 20px;
     
 }

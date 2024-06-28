@@ -52,6 +52,22 @@ namespace ReactVeloShop.Server.Controllers.Api
             return Ok(products);
         }
 
+        [HttpGet("bikeCategory")]
+        public async Task<ActionResult> GetProductsByBikeCategory(string? searchTerm, string? searchBrand, string? sortOrder = "asc", int page = 2, int pageSize = 10)
+        {
+            var query = new ProductQueryObject
+            {
+                SearchTerm = searchTerm,
+                SearchBrand = searchBrand,
+                SortOrder = sortOrder,
+                PageNumber = page,
+                PageSize = pageSize
+            };
+
+            var products = await _productService.GetByBikeGategory(query);
+            return Ok(products);
+        }
+
         [HttpPost]
         public async Task<ActionResult> CreateProduct([FromBody] CreateProductData data)
         {

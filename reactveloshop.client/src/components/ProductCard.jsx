@@ -1,14 +1,11 @@
 ﻿/* eslint-disable react/prop-types */
-import { useContext, useState } from "react";
-import { useFetching } from "../hooks/useFetching";
-import MyButton from "../components/UI/button/MyButton";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"
+import { forwardRef, useContext, } from "react";
+import MyButton from "../components/UI/button/MyButton"
+import { Link } from "react-router-dom"
 import noPhotoImage from "../accets/defaultProductImage.png"
 import classes from "../styles/ProductCard.module.css"
 import { Context } from "../main";
-
-function ProductCard({ product }) {
+function ProductCard({ product }, ref) {
 
     const { cartStore } = useContext(Context)
 
@@ -17,7 +14,7 @@ function ProductCard({ product }) {
     }
 
     return (
-        <div className={classes.card}>
+        <div className={classes.card} ref={ref}>
             <div className={classes.cardImage}>
                 <img src={noPhotoImage}></img>
             </div>
@@ -37,4 +34,4 @@ function ProductCard({ product }) {
     );
 }
 
-export default ProductCard;
+export default forwardRef(ProductCard);

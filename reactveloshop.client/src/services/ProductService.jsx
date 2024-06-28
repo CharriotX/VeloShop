@@ -50,6 +50,11 @@ export default class ProductService {
         return response;
     }
 
+    static async getProductsByBikeCategory() {
+        const response = await axios.get(`${baseProductUrl}/bikeCategory/`)
+        return response;
+    }
+
     static async createProduct(data) {
         try {
             await axios.post('https://localhost:7245/api/product/', JSON.stringify(data), {

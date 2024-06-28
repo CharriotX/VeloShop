@@ -118,7 +118,7 @@ namespace Data.Sql.Repositories
             return cartData;
         }
 
-        public async Task CleanCart(int cartId)
+        public async Task ClearCart(int cartId)
         {
             var cart = await GetCart(cartId);
             _webContext.Remove(cart);

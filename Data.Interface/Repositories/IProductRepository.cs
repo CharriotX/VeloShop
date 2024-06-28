@@ -12,6 +12,7 @@ namespace Data.Interface.Repositories
     {
         Task<PagedList<AdminProductData>> GetAll(ProductQueryObject query);
         Task<ProductData> GetProductData(int id);
+        Task<PagedList<ProductData>> GetByBikeCategory(ProductQueryObject query);
         Task DeleteProduct(int id);
         Task UpdateProductBrand(int productId, int brandId);
         Task UpdateProductCategory(int productId, int categoryId, int subcategoryId);

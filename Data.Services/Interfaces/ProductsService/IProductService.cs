@@ -12,6 +12,7 @@ namespace Data.Services.Interfaces.ProductsService
         Task<ProductData> GetProductData(int id);
         Task<List<ProductData>> GetProductDataByCategory(int categoryId);
         Task<List<ProductData>> GetProductDataBySubcategory(int subcategoryId);
+        Task<PagedList<ProductData>> GetByBikeGategory(ProductQueryObject productQuery);
         Task<ProductData> CreateProduct(CreateProductData data);
         Task DeleteProduct(int id);
         Task UpdateProduct(CreateProductData data);

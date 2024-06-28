@@ -35,7 +35,10 @@ namespace Data.Sql.Repositories
 
         public async Task<CategoryWithSubcategoriesData> GetCategoryDataById(int id)
         {
-            var category = await _dbSet.Include(x => x.Subcategories).Include(x => x.Specifications).Where(x => x.IsActive).FirstOrDefaultAsync(x => x.Id == id);
+            var category = await _dbSet.Include(x => x.Subcategories)
+                .Include(x => x.Specifications.Where(x => x.IsActive))
+                .Include(x => x.Products.Where(x => x.IsActive))
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             return new CategoryWithSubcategoriesData
             {
@@ -45,7 +48,8 @@ namespace Data.Sql.Repositories
                 {
                     Id = x.Id,
                     Name = x.Name
-                }).ToList()
+                }).ToList(),
+                TotalProducts = category.Products.Count
             };
         }
 
@@ -54,6 +58,7 @@ namespace Data.Sql.Repositories
             var categories = await _dbSet
                 .Where(x => x.IsActive)
                 .Include(x => x.Subcategories.Where(x => x.IsActive))
+                .Include(x => x.Products.Where(x => x.IsActive))
                 .ToListAsync();
 
             var data = categories.Select(x => new CategoryWithSubcategoriesData
@@ -64,7 +69,8 @@ namespace Data.Sql.Repositories
                 {
                     Id = x.Id,
                     Name = x.Name
-                }).ToList()
+                }).ToList(),
+                TotalProducts = x.Products.Count,
             })
                 .ToList();
 

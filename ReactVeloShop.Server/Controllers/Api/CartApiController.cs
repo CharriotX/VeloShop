@@ -65,12 +65,12 @@ namespace ReactVeloShop.Server.Controllers.Api
         }
 
         [HttpDelete]
-        public async Task<IActionResult> CleanCart()
+        public async Task<IActionResult> ClearCart()
         {
             var cartId = _httpContextAccessor.HttpContext.Session.GetString(CartSessionId);
             if (cartId != null)
             {
-               await _cartService.CleanCart(cartId);
+               await _cartService.ClearCart(cartId);
             }
 
             _httpContextAccessor.HttpContext.Session.Remove(CartSessionId);

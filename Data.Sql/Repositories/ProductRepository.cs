@@ -77,6 +77,71 @@ namespace Data.Sql.Repositories
             };
         }
 
+        public async Task<PagedList<ProductData>> GetByBikeCategory(ProductQueryObject query)
+        {
+            var bikeCategory = await _categoryRepository.GetByName("Велосипеды");
+
+            IQueryable<Product> productQuery = _dbSet
+                .Where(x => x.IsActive)
+                .Include(x => x.Subcategory)
+                .Include(x => x.Category)
+                .Include(x => x.Brand)
+                .Where(x => x.Category == bikeCategory);
+
+
+            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            {
+                productQuery = productQuery.Where(p => p.Name.Contains(query.SearchTerm));
+            }
+            if (!string.IsNullOrWhiteSpace(query.SearchBrand))
+            {
+                productQuery = productQuery.Where(p => p.Brand.Name.Contains(query.SearchBrand));
+            }
+
+            if (query.SortOrder.ToLower() == "desc")
+            {
+                productQuery = productQuery.OrderByDescending(GetSortedProperty(query));
+            }
+            else
+            {
+                productQuery = productQuery.OrderBy(GetSortedProperty(query));
+            }
+
+            var productsData = await productQuery
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(x => new ProductData
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Price = x.Price,
+                    Brand = new BrandData
+                    {
+                        Id = x.Brand.Id,
+                        Name = x.Brand.Name,
+                    },
+                    Category = new CategoryData
+                    {
+                        Id = x.Category.Id,
+                        Name = x.Category.Name,
+                    },
+                    Subcategory = new SubcategoryData
+                    {
+                        Id = x.Subcategory.Id,
+                        Name = x.Subcategory.Name,
+                    }
+                }).ToListAsync();
+
+            return new PagedList<ProductData>
+            {
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize,
+                TotalRecords = productQuery.Count(),
+                TotalPages = (int)Math.Ceiling((decimal)productQuery.Count() / (decimal)query.PageSize),
+                Items = productsData
+            };
+        }
+
         public async Task<ProductData> GetProductData(int id)
         {
             var product = await _dbSet

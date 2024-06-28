@@ -22,6 +22,12 @@ namespace Data.Services.Services
             return products;
         }
 
+        public async Task<PagedList<ProductData>> GetByBikeGategory(ProductQueryObject productQuery)
+        {
+            var products = await _productRepository.GetByBikeCategory(productQuery);
+            return products;
+        }
+
         public async Task<ProductData> GetProductData(int id)
         {
             var data = await _productRepository.GetProductData(id);

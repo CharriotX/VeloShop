@@ -60,10 +60,10 @@ namespace Data.Services.Services
             return cart;
         }
 
-        public async Task CleanCart(string cartIdStr)
+        public async Task ClearCart(string cartIdStr)
         {
             var cartId = int.Parse(cartIdStr);
-            await _cartRepository.CleanCart(cartId);
+            await _cartRepository.ClearCart(cartId);
         }
     }
 }
