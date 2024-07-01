@@ -57,7 +57,7 @@ const AdminProductTable = () => {
         let div = event.target.closest('div');
         setProductId(div.id)
     }
-    console.log(productId)
+
     return (
         <>
             <MyInput

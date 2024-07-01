@@ -16,7 +16,7 @@ namespace ReactVeloShop.Server.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAll(string? searchTerm, string? searchColumn = "id", string? sortOrder = "asc", int page = 2, int pageSize = 10)
+        public async Task<ActionResult> GetAll(string? searchTerm, string? searchColumn = "id", string? sortOrder = "asc", int page = 1, int pageSize = 10)
         {
             var query = new ProductQueryObject
             {
@@ -53,12 +53,13 @@ namespace ReactVeloShop.Server.Controllers.Api
         }
 
         [HttpGet("bikeCategory")]
-        public async Task<ActionResult> GetProductsByBikeCategory(string? searchTerm, string? searchBrand, string? sortOrder = "asc", int page = 2, int pageSize = 10)
+        public async Task<ActionResult> GetProductsByBikeCategory(string? searchTerm,string searchColumn, string? searchBrand, string? sortOrder = "asc", int page = 1, int pageSize = 5)
         {
             var query = new ProductQueryObject
             {
                 SearchTerm = searchTerm,
                 SearchBrand = searchBrand,
+                SortColumn = searchColumn,
                 SortOrder = sortOrder,
                 PageNumber = page,
                 PageSize = pageSize

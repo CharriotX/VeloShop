@@ -51,7 +51,7 @@ export default class ProductService {
     }
 
     static async getProductsByBikeCategory() {
-        const response = await axios.get(`${baseProductUrl}/bikeCategory/`)
+        const response = await axios.get(`${baseProductUrl}bikeCategory`)
         return response;
     }
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = 'https://localhost:7245/api/brand/';
+const baseUrl = 'https://localhost:7245/api/brands/';
 
 export default class BrandService {
     static async getAll() {
@@ -15,6 +15,11 @@ export default class BrandService {
 
     static async getAllBrandsByCategoryId(id) {
         const response = await axios.get(`${baseUrl}category/${id}`);
+        return response;
+    }
+
+    static async getBrandsByBikeCategory() {
+        const response = await axios.get(`${baseUrl}bikeBrands`);
         return response;
     }
 

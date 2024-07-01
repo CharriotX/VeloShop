@@ -1,18 +1,21 @@
 ﻿using Data.Interface.DataModels.Brands;
 using Data.Services.Interfaces.BrandsService;
+using Data.Services.Interfaces.CategoriesService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ReactVeloShop.Server.Controllers.Api
 {
 
     [ApiController]
-    [Route("/api/brand")]
+    [Route("/api/brands")]
     public class BrandApiController : ControllerBase
     {
         private IBrandService _brandService;
-        public BrandApiController(IBrandService brandService)
+        private ICategoryService _categoryService;
+        public BrandApiController(IBrandService brandService, ICategoryService categoryService)
         {
             _brandService = brandService;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
@@ -22,17 +25,26 @@ namespace ReactVeloShop.Server.Controllers.Api
             return Ok(brandsData);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{name}")]
         public async Task<IActionResult> GetBrandyById(string name)
         {
             var brandData = await _brandService.GetBrandByName(name);
             return Ok(brandData);
         }
 
-        [HttpGet("/category/{id}")]
+        [HttpGet("category/{id}")]
         public async Task<IActionResult> GetBrandyByCategoryId(int id)
         {
             var brandData = await _brandService.GetBrandsByCategoryId(id);
+            return Ok(brandData);
+        }
+
+        [Route("bikeBrands")]
+        [HttpGet]
+        public async Task<IActionResult> GetBrandyByBikeCategory()
+        {
+            var bikeCategory = await _categoryService.GetCategoryByName("Велосипеды");
+            var brandData = await _brandService.GetBrandsByCategoryId(bikeCategory.Id);
             return Ok(brandData);
         }
 

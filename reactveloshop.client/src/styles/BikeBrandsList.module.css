@@ -1,0 +1,16 @@
+.brandContainer{
+    display:flex;
+    flex-wrap: wrap
+}
+
+.brandItem{
+    margin: 5px;
+    padding: 5px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.brandItem:hover {
+    padding: 4px 5px;
+    border-bottom: 1px solid #D3D3D3;
+}

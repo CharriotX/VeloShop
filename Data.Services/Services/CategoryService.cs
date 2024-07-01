@@ -41,6 +41,13 @@ namespace Data.Services.Services
             return data;
         }
 
+        public async Task<CategoryData> GetCategoryByName(string name)
+        {
+            var data = await _categoryRepository.GetCategoryDataByName(name);
+
+            return data;
+        }
+
         public async Task<CategoryDataForAddProduct> GetCategoryDataForAddProduct(int id)
         {
             var data = await _categoryRepository.GetCategoryDataForAddProduct(id);
