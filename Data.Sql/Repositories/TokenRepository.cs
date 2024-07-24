@@ -45,7 +45,7 @@ namespace Data.Sql.Repositories
                 };
             }
 
-            token.RefreshToken = refreshToken;
+            token.RefreshToken = refreshToken;            
             await _webContext.SaveChangesAsync();
 
             return new TokensData

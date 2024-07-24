@@ -4,8 +4,7 @@ import classes from '../styles/Admin.module.css'
 import { Link } from "react-router-dom"
 import MyModal from "../components/UI/modal/MyModal"
 import CreateBrandForm from "../components/CreateBrandForm";
-import { useContext, useState } from "react";
-import { Context } from "../main";
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import AdminProductTable from "../components/AdminProductTable";
 
@@ -23,22 +22,7 @@ function AdminPage() {
                     >
                         <CreateBrandForm setVisible={setModal}></CreateBrandForm>
                     </MyModal>
-                    <MyButton><Link to="/addProduct">Добавить продукт</Link></MyButton>
-                </div>
-            </section>
-            <section className={classes.infoSection}>
-                <div className={classes.topBar}>
-                    <div>
-                        <Link>Продукты</Link>
-                    </div>
-                    <div>
-                        <Link>Категории и подкатегории</Link>
-                    </div>
-                    <div>
-                        <Link>Бренды</Link>
-                    </div>
-                </div>
-                <div className={classes.infoField}>
+                    <Link to="/addProduct"><MyButton>Добавить продукт</MyButton></Link>
                 </div>
             </section>
             <section className={classes.tableSection}>

@@ -1,21 +1,19 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import LoaderProductList from '../components/UI/loaderProductList/LoaderProductList';
-import MySelect from '../components/UI/select/MySelect';
 import ProductCard from '../components/ProductCard';
 import classes from "../styles/ProductList.module.css"
 import homeClasses from "../styles/Home.module.css"
 import { useFetching } from '../hooks/useFetching';
 import ProductService from '../services/ProductService';
 import BikeBrandsList from '../components/BikeBrandsList';
-import MyInput from '../components/UI/input/MyInput';
 import Pagination from '../components/UI/pagination/Pagination';
+import MySortFilter from '../components/UI/sortFilter/MySortFilter';
 
 function Home() {
 
     const [products, setProducts] = useState([]);
-    const [brands, setBrands] = useState([]);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(5);
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
     const [sorting, setSorting] = useState({ column: "Id", order: "asc" })
@@ -23,57 +21,30 @@ function Home() {
     const [sortBrand, setSortBrand] = useState("")
 
     const [fetchProducts, isProductsLoading, productsError] = useFetching(async () => {
-        const response = await ProductService.getProductsByBikeCategory(searchTerm, sortBrand,);
-        console.log(response)
-        setProducts([...products, ...response.data.items])
+        const response = await ProductService.getProductsByBikeCategory(searchTerm, sorting.column, sortBrand, sorting.order, page, pageSize);
+        setProducts(response.data.items)
         setTotalPages(response.data.totalPages)
         setTotalRecords(response.data.totalRecords)
     })
 
     useEffect(() => {
         fetchProducts(page, pageSize)
-    }, [])
+    }, [page, pageSize, sorting, searchTerm, sortBrand])
 
-    const options = [
-        {
-            label: 'По алфавиту (возрастание)',
-            value: { column: "name", order: "asc" },
-        },
-        {
-            label: 'По алфавиту (убывание)',
-            value: { column: "name", order: "desc" },
-        },
-        {
-            label: 'По цене (возрастание)',
-            value: { column: "price", order: "asc" },
-        },
-        {
-            label: 'По цене (убывание)',
-            value: { column: "price", order: "desc" },
-        },
-    ];
-
-    const selectHandler = (e) => {
-        switch (e.target.value) {
-            case 'По алфавиту (возрастание)':
-                setSorting(options[0].value);
-                break;
-            case 'По алфавиту (убывание)':
-                setSorting(options[1].value);
-                break;
-            case 'По цене (возрастание)':
-                setSorting(options[2].value);
-                break;
-            case 'По цене (убывание)':
-                setSorting(options[3].value);
-                break;
-        }
-    };
-
-
-    const brandSorting = (name) => {
-        console.log(name)
+    const brandSortingHandler = (name) => {
         setSortBrand(name)
+    }
+
+    const sortingHandler = (value) => {
+        setSorting(value)
+    }
+
+    const searchTermHandler= (value) => {
+        setSearchTerm(value)
+    }
+
+    const pageSizeHandler = (value) => {
+        setSearchTerm(value)
     }
 
     const changePage = (page) => {
@@ -83,27 +54,10 @@ function Home() {
     return (
         <div>
             <div >
-                <div className={homeClasses.sortContainer}>
-                    <select value={options.value} onChange={(e) => selectHandler(e)} defaultValue="Сортировка">
-                        <option disabled>Сортировка</option>
-                        {options.map((option) => (
-                            <option key={option.label}>{option.label}</option>
-                        ))}
-                    </select>
-                    <MySelect
-                        defaultValue="Кол-во отображаемых элементов"
-                        options={[
-                            { value: "5", name: "5" },
-                            { value: "10", name: "10" },
-                            { value: "20", name: "20" },
-                        ]}
-                        onChange={value => setPageSize(value)}
-                    ></MySelect>
-                    <MyInput placeholder="Поиск.."></MyInput>
-                </div>
+                <MySortFilter changeSorting={sortingHandler} searchTerm={searchTerm} changePageSize={pageSizeHandler} changeSearchTerm={searchTermHandler}></MySortFilter>
                 <div className={homeClasses.brandsContaner}>
                     <div>Названия брендов</div>
-                    <BikeBrandsList sorting={brandSorting}></BikeBrandsList>
+                    <BikeBrandsList sorting={brandSortingHandler}></BikeBrandsList>
                 </div>
             </div>
             {isProductsLoading

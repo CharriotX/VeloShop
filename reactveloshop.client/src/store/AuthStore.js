@@ -1,10 +1,13 @@
 import { makeAutoObservable } from 'mobx';
 import AuthService from '../services/AuthService';
-import axios from 'axios';
+import $api from '../http/index';
+import axios from "axios";
 
-export default class Store {
-    user = {username:"", email: "" };
+export default class AuthStore {
+    user = { username: "", email: "", role: "" };
+    isLoading = true;
     isAuth = false;
+    isAdmin = false;
 
     constructor() {
         makeAutoObservable(this)
@@ -17,6 +20,13 @@ export default class Store {
     setUser(user) {
         this.user = user;
     }
+    setIsAdmin(bool) {
+        this.isAdmin = bool;
+    }
+
+    setIsLoading(bool) {
+        this.isLoading = bool;
+    }
 
     async login(email, password) {
         try {
@@ -24,6 +34,9 @@ export default class Store {
             localStorage.setItem('token', response.data.accessToken)
             this.setAuth(true);
             this.setUser(response.data.userData);
+            if (response.data.userData.role === "Admin") {
+                this.setIsAdmin(true)
+            }
         } catch (e) {
             console.log(e)
         }
@@ -35,6 +48,9 @@ export default class Store {
             localStorage.setItem('token', response.data.accessToken)
             this.setAuth(true);
             this.setUser(response.data.userData);
+            if (response.data.userData.role === "Admin") {
+                this.setIsAdmin(true)
+            }
         } catch (e) {
             console.log(e)
         }
@@ -46,6 +62,7 @@ export default class Store {
             localStorage.removeItem("token");
             this.setAuth(false);
             this.setUser({});
+            this.setIsAdmin(false)
         } catch (e) {
             console.log(e)
         }
@@ -58,8 +75,22 @@ export default class Store {
             localStorage.setItem('token', response.data.accessToken)
             this.setAuth(true);
             this.setUser(response.data.userData);
+            if (response.data.userData.role === "Admin") {
+                this.setIsAdmin(true)
+            }
         } catch (e) {
             console.log(e)
-        }        
+        }
+    }
+
+    async myProfile() {
+        try {
+            const token = localStorage.getItem('token')
+            const response = await $api.get(`https://localhost:7245/api/user/profile`, { accessToken: token }, { withCredentials: true })
+            this.setAuth(true);
+            this.setUser(response.data.userData);
+        } catch (e) {
+            console.log(e)
+        }
     }
 }

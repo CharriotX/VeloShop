@@ -1,4 +1,4 @@
-import { makeAutoObservable, toJS } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import CategoryService from '../services/CategoryService';
 
 export default class CreateBrandStore {

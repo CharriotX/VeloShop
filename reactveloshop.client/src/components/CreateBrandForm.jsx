@@ -4,11 +4,11 @@ import { useContext, useEffect, useState } from "react";
 import MyInput from "./UI/input/MyInput";
 import MySelect from "./UI/select/MySelect";
 import { observer } from "mobx-react-lite";
-import { Context } from "../main";
 import MyButton from "./UI/button/MyButton";
 import BrandService from "../services/BrandService";
 import { toJS } from 'mobx';
 import classes from '../styles/CreateBrandForm.module.css'
+import { Context } from "../main";
 
 function CreateBrandForm({ setVisible }) {
 

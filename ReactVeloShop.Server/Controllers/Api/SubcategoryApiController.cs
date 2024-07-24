@@ -19,7 +19,7 @@ namespace ReactVeloShop.Server.Controllers.Api
             _subcategoryService = subcategoryService;
         }
 
-        [HttpGet("{categoryId}")]
+        [HttpGet("getSubcategories/{categoryId}")]
         public async Task<IActionResult> GetSubcategoriesByCategoryId(int categoryId)
         {
             var category = await _categoryService.GetCategoryById(categoryId);
@@ -27,6 +27,14 @@ namespace ReactVeloShop.Server.Controllers.Api
             var subcategories = category.Subcategories;
             
             return Ok(subcategories);
+        }
+
+        [HttpGet("{subcategoryId}")]
+        public async Task<IActionResult> GetSubcategoriesById(int subcategoryId)
+        {
+            var subcategory = await _subcategoryService.GetSubcategory(subcategoryId);
+
+            return Ok(subcategory);
         }
 
         [HttpPost]

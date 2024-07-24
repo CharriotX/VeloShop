@@ -1,20 +1,20 @@
 ﻿/* eslint-disable react-refresh/only-export-components */
 import { useContext, useState } from "react";
 import { Navigate, Link } from "react-router-dom";
-import { Context } from "../main";
 import { observer } from "mobx-react-lite";
 import MyButton from "../components/UI/button/MyButton";
 import MyInput from "../components/UI/input/MyInput";
 import classes from '../styles/Login.module.css'
+import { Context } from "../main";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const { store } = useContext(Context);
+    const { authStore } = useContext(Context);
 
 
-    if (store.isAuth) {
+    if (authStore.isAuth) {
         return (<Navigate to={'/profile'} replace></Navigate>)
     }
 
@@ -39,7 +39,7 @@ function Login() {
                     ></MyInput>
                 </div>
                 <div className={classes.submitBtn}>
-                    <MyButton className={classes.btn} onClick={() => store.login(email, password)}>Login</MyButton>
+                    <MyButton className={classes.btn} onClick={() => authStore.login(email, password)}>Login</MyButton>
                 </div>
                 <div className={classes.registerRedirect}>
                     Еще нет аккаунта? <Link to="/registration">Перейти к регистрации.</Link>

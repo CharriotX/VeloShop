@@ -12,14 +12,14 @@ function LoaderProductCard() {
             </div>
             <div className={classes.cardBody}>
                 <div className={classes.cardTitle}>
-                    
+
                 </div>
                 <div style={{ display: "flex", justifyContent: "center" }}>
                     <Loader></Loader>
                 </div>
             </div>
             <div className={classes.cardPrice}>
-               
+
             </div>
         </div>
     );

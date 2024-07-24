@@ -34,29 +34,17 @@ namespace Data.Services.Services
             return data;
         }
 
-        public async Task<List<ProductData>> GetProductDataByCategory(int categoryId)
+        public async Task<PageResponse<CategoryIdPageResponse>> GetProductDataByCategory(int categoryId, ProductQueryObject productQuery)
         {
-            var data = await _productRepository.GetAllProductsByCategory(categoryId);
-            return data;
-        }
-
-        public async Task<List<ProductData>> GetProductDataBySubcategory(int subcategoryId)
-        {
-            var data = await _productRepository.GetProductsBySubcategory(subcategoryId);
-            return data;
-        }
-
-        public async Task<PageResponse<CategoryIdPageResponse>> GetProductDataByCategoryWithPagination(int categoryId, int pageNumber, int pageSize)
-        {
-            var data = await _productRepository.GetProductsByCategoryWithPagination(categoryId, pageNumber, pageSize);
+            var data = await _productRepository.GetProductsByCategory(categoryId, productQuery);
 
             return data;
 
         }
 
-        public async Task<PageResponse<SubcategoryIdPagePesponse>> GetProductDataBySubcategoryWithPagination(int subcategoryId, int pageNumber, int pageSize)
+        public async Task<PageResponse<SubcategoryIdPagePesponse>> GetProductDataBySubcategory(int subcategoryId, ProductQueryObject queryObject)
         {
-            var data = await _productRepository.GetProductsBySubcategoryWithPagination(subcategoryId, pageNumber, pageSize);
+            var data = await _productRepository.GetProductsBySubcategory(subcategoryId, queryObject);
             return data;
         }
 

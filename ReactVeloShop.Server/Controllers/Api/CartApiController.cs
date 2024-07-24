@@ -1,11 +1,6 @@
-﻿using Data.Interface.DataModels.Carts;
-using Data.Interface.Models;
-using Data.Services.Interfaces.CartService;
+﻿using Data.Services.Interfaces.CartService;
 using Data.Services.Interfaces.ProductsService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
-using System.Web.Helpers;
 
 namespace ReactVeloShop.Server.Controllers.Api
 {

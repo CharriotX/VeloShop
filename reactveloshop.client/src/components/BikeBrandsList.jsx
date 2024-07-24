@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { useFetching } from "../hooks/useFetching";
 import BrandService from "../services/BrandService";

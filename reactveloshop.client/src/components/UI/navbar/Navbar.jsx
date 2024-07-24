@@ -4,8 +4,10 @@ import { useContext, useEffect, useState } from "react";
 import { useFetching } from "../../../hooks/useFetching";
 import CategoryService from "../../../services/CategoryService";
 import { observer } from "mobx-react-lite";
-import { Context } from "../../../main";
 import CartWidget from "../../CartWidget";
+import { useMemo } from "react";
+import { Context } from "../../../main";
+
 
 function Navbar() {
 
@@ -15,9 +17,13 @@ function Navbar() {
         setCategories(response.data);
     })
 
-    const { store } = useContext(Context);
+    const { authStore } = useContext(Context);
 
     useEffect(() => {
+        
+    }, [])
+
+    useMemo(() => {
         fetchCategory()
     }, [])
 
@@ -26,11 +32,13 @@ function Navbar() {
             <div className={classes.navbarContainer}>
                 <div className={classes.navbarHeader}>
                     <h2><Link to="/">VELO SHOP</Link></h2>
-                    {store.isAuth
+                    {authStore.isAuth
                         ? <div className={classes.loginLinks}>
                             <CartWidget></CartWidget>
-                            <div><Link to="/profile">Profile</Link></div>
-                            <div><Link onClick={() => store.logout()}>Logout</Link></div>
+                            <div>
+                                <div><Link to="/profile">Profile</Link></div>
+                                <div><Link onClick={() => authStore.logout()}>Logout</Link></div>
+                            </div>                            
                         </div>
                         : <div className={classes.loginLinks}>
                             <CartWidget></CartWidget>

@@ -10,7 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\components\UI\loader\" />
-    <Folder Include="src\router\" />
     <Folder Include="src\http\" />
   </ItemGroup>
 </Project>

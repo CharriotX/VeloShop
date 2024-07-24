@@ -10,13 +10,11 @@ namespace Data.Services.Interfaces.ProductsService
     {
         Task<PagedList<AdminProductData>> GetAll(ProductQueryObject productQuery);
         Task<ProductData> GetProductData(int id);
-        Task<List<ProductData>> GetProductDataByCategory(int categoryId);
-        Task<List<ProductData>> GetProductDataBySubcategory(int subcategoryId);
         Task<PagedList<ProductData>> GetByBikeGategory(ProductQueryObject productQuery);
         Task<ProductData> CreateProduct(CreateProductData data);
         Task DeleteProduct(int id);
         Task UpdateProduct(CreateProductData data);
-        Task<PageResponse<CategoryIdPageResponse>> GetProductDataByCategoryWithPagination(int categoryId, int pageNumber, int pageSize);
-        Task<PageResponse<SubcategoryIdPagePesponse>> GetProductDataBySubcategoryWithPagination(int subcategoryId, int pageNumber, int pageSize);
+        Task<PageResponse<CategoryIdPageResponse>> GetProductDataByCategory(int categoryId, ProductQueryObject productQuery);
+        Task<PageResponse<SubcategoryIdPagePesponse>> GetProductDataBySubcategory(int subcategoryId, ProductQueryObject queryObject);
     }
 }

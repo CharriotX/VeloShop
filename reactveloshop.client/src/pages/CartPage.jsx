@@ -2,12 +2,9 @@
 import { useContext } from 'react';
 import { useEffect } from 'react'
 import { observer } from "mobx-react-lite";
-import { toJS } from 'mobx';
-import { Context } from '../main';
 import classes from '../styles/CartPage.module.css'
-import TableHeader from '../components/UI/table/TableHeader';
 import MyButton from '../components/UI/button/MyButton';
-import CartService from '../services/CartService';
+import { Context } from '../main';
 
 function CartPage() {
     const columns = ["Id", "Name", "Price", "Quantity", "Action"]
@@ -30,7 +27,7 @@ function CartPage() {
         <>
             <h2>Ваша корзина</h2>
             <div>
-                {cartStore.cartItems.length > 0
+                {cartStore.productCount > 0
                     ?
                     <div>
                         <table className={classes.table}>

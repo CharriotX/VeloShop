@@ -34,7 +34,7 @@ namespace ReactVeloShop.Server.Helpers.Jwt
                 var tokenKey = Encoding.UTF8.GetBytes(_options.SecretKey);
                 var token = new JwtSecurityToken(
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(120),
+                    expires: DateTime.Now.AddHours(12),
                     signingCredentials: credentials);
 
                 var refreshToken = GenerateRefreshToken();
@@ -57,9 +57,9 @@ namespace ReactVeloShop.Server.Helpers.Jwt
             return Convert.ToBase64String(randomNumber);
         }
 
-        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        public ClaimsPrincipal GetTokenPrincipal(string token)
         {
-            var Key = Encoding.UTF8.GetBytes(_options.SecretKey);
+            var key = Encoding.UTF8.GetBytes(_options.SecretKey);
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -67,19 +67,11 @@ namespace ReactVeloShop.Server.Helpers.Jwt
                 ValidateAudience = false,
                 ValidateLifetime = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Key),
+                IssuerSigningKey = new SymmetricSecurityKey(key),
                 ClockSkew = TimeSpan.Zero
             };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-            JwtSecurityToken jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-            {
-                throw new SecurityTokenException("Invalid token");
-            }
-
-            return principal;
+            
+            return new JwtSecurityTokenHandler().ValidateToken(token, tokenValidationParameters, out _);
         }
     }
 

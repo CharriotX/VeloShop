@@ -1,7 +1,5 @@
-import classes from "../styles/SubcategoriesList.module.css"
-
+/* eslint-disable react/prop-types */
 function SubcategoryItem(props) {
-    console.log(props)
     return (
         <div>
             <div>{props.sub.id}</div>

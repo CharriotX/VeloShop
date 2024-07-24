@@ -19,9 +19,8 @@ namespace Data.Interface.Repositories
         Task UpdateProduct(CreateProductData data);
         Task UpdateProductSpecifications(int productId, List<ProductSpecificationData> specifications);
         Task<List<ProductData>> GetAllProductsByCategory(int categoryId);
-        Task<List<ProductData>> GetProductsBySubcategory(int subcategoryId);
         Task<ProductData> CreateProduct(CreateProductData data);
-        Task<PageResponse<CategoryIdPageResponse>> GetProductsByCategoryWithPagination(int categoryId, int pageNumber, int pageSize);
-        Task<PageResponse<SubcategoryIdPagePesponse>> GetProductsBySubcategoryWithPagination(int subcategoryId, int pageNumber, int pageSize);
+        Task<PageResponse<CategoryIdPageResponse>> GetProductsByCategory(int categoryId, ProductQueryObject productQuery);
+        Task<PageResponse<SubcategoryIdPagePesponse>> GetProductsBySubcategory(int subcategoryId, ProductQueryObject queryObject);
     }
 }

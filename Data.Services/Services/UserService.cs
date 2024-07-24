@@ -1,7 +1,6 @@
 ﻿using Data.Interface.DataModels.Users;
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.UsersService;
-using System.Data;
 
 namespace Data.Services.Services
 {
@@ -29,7 +28,7 @@ namespace Data.Services.Services
                 Id = user.Id,
                 Email = user.Email,
                 Username = user.Username,
-                Role = user.Role
+                Role = user.Role.ToString()
             };
         }
         public async Task<UserWithRefreshTokenData> GetUserByUsername(string username)
@@ -42,7 +41,7 @@ namespace Data.Services.Services
                 Email = userData.Email,
                 Username = userData.Username,
                 RefreshToken = userData.Token.RefreshToken,
-                Role = userData.Role
+                Role = userData.Role.ToString()
             };
         }
     }

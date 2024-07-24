@@ -1,16 +1,16 @@
 ﻿import { useContext, useState } from "react";
-import { Context } from "../main";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import MyInput from "../components/UI/input/MyInput";
 import classes from '../styles/Login.module.css'
 import MyButton from "../components/UI/button/MyButton";
+import { Context } from "../main";
 function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
 
-    const { store } = useContext(Context);
+    const { authStore } = useContext(Context);
 
     return (
         <div className={classes.login}>
@@ -41,7 +41,7 @@ function Register() {
                     ></MyInput>
                 </div>
                 <div className={classes.submitBtn}>
-                    <MyButton className={classes.btn} onClick={() => store.registration(username, email, password)}>Registration</MyButton>
+                    <MyButton className={classes.btn} onClick={() => authStore.registration(username, email, password)}>Registration</MyButton>
                 </div>
                 <div className={classes.registerRedirect}>
                     Уже зарегистрированы? <Link to="/login">Войти.</Link>

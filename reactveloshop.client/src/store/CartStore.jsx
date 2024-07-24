@@ -1,6 +1,5 @@
-import { makeAutoObservable, toJS } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import CartService from '../services/CartService';
-import axios from 'axios';
 
 export default class CartStore {
 
@@ -28,6 +27,10 @@ export default class CartStore {
         this.productCount = productCount;
     }
 
+    async getProductCount() {
+        return this.productCount;
+    }
+
     async getCart() {
         try {
             var response = await CartService.getCart();
@@ -43,10 +46,9 @@ export default class CartStore {
     async addProductToCart(id) {
         try {
             var response = await CartService.addProductToCart(id);
-            console.log(response.data)
             this.setTotalPrice(response.data.total)
             this.setCartItems(response.data.items)
-            this.setProductCount(response.data.items.lenght)
+            this.setProductCount(response.data.itemsCount)
         } catch (e) {
             console.log(e)
         }
@@ -55,9 +57,9 @@ export default class CartStore {
     async removeItem(id) {
         try {
             var response = await CartService.removeItem(id);
-            console.log(response.data)
             this.setTotalPrice(response.data.total)
             this.setCartItems(response.data.items)
+            this.setProductCount(response.data.itemsCount)
         } catch (e) {
             console.log(e)
         }
@@ -68,6 +70,7 @@ export default class CartStore {
             await CartService.cleanCart();
             this.setTotalPrice(0)
             this.setCartItems([])
+            this.setProductCount(0)
         } catch (e) {
             console.log(e)
         }

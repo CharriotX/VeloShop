@@ -14,7 +14,12 @@ export default class CategoryService {
     }
 
     static async getSubcategoriesByCategoryId(categoryId) {
-        const response = await axios.get('https://localhost:7245/api/subcategory/' + categoryId)
+        const response = await axios.get('https://localhost:7245/api/subcategory/getSubcategories' + categoryId)
+        return response;
+    }
+
+    static async getSubcategoryById(subcategoryId) {
+        const response = await axios.get('https://localhost:7245/api/subcategory/' + subcategoryId)
         return response;
     }
 

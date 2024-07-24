@@ -33,6 +33,7 @@ namespace Data.Sql.Repositories
                     Quantity = x.Quantity,
                     Price = x.Price
                 }).ToList(),
+                ItemsCount = cart.CartItems.Count,
                 Total = cart.CartItems.Where(x => x.Cart.Id == cart.Id).Select(x => x.Price).Sum()
             };
 
@@ -89,6 +90,7 @@ namespace Data.Sql.Repositories
                     Price = x.Price,
                     Quantity = x.Quantity
                 }).ToList(),
+                ItemsCount = cart.CartItems.Count,
                 Total = cart.CartItems.Where(x => x.Cart.Id == cartId).Select(x=> x.Price).Sum()
             };
 
@@ -112,7 +114,8 @@ namespace Data.Sql.Repositories
                     ProductName = x.Product.Name,
                     Price = x.Price,
                     Quantity = x.Quantity
-                }).ToList()
+                }).ToList(),
+                ItemsCount = cart.CartItems.Count
             };
 
             return cartData;
