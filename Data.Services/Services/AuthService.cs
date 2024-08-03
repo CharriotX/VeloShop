@@ -1,6 +1,5 @@
 ﻿using Data.Interface.DataModels.Tokens;
 using Data.Interface.DataModels.Users;
-using Data.Interface.Models;
 using Data.Interface.Models.enums;
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.AuthService;
@@ -58,6 +57,7 @@ namespace Data.Services.Services
                 {
                     Email = userData.Email,
                     Username = userData.Username,
+                    Role = userData.Role.ToString()
                 }
             };
 
@@ -125,11 +125,11 @@ namespace Data.Services.Services
                 UserData = new ProfileData
                 {
                     Email = userData.Email,
-                    Username = userData.Username
+                    Username = userData.Username,
+                    Role = user.Role.ToString()
                 }
             };
 
-            await _tokenRepository.RemoveToken(refreshToken);
             await _tokenRepository.SetToken(userData.Id, newJwtTokens.RefreshToken);
 
             return tokenAndUserData;

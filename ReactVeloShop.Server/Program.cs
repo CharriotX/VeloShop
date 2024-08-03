@@ -1,6 +1,7 @@
 using Data.Interface.Repositories;
 using Data.Services.Interfaces.AuthService;
 using Data.Services.Interfaces.BrandsService;
+using Data.Services.Interfaces.CartService;
 using Data.Services.Interfaces.CategoriesService;
 using Data.Services.Interfaces.ProductsService;
 using Data.Services.Interfaces.SubcategoriesService;
@@ -13,9 +14,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
+using ReactVeloShop.Server.Extensions;
 using ReactVeloShop.Server.Extentions;
 using ReactVeloShop.Server.Helpers.Jwt;
-using ReactVeloShop.Server.Middlewares;
 using ReactVeloShop.Server.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,9 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(J
 
 var serviceProvider = builder.Services.BuildServiceProvider();
 var opt = serviceProvider.GetRequiredService<IOptions<JwtOptions>>();
+
+
+
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
@@ -73,55 +77,73 @@ builder.Services.AddDbContext<WebContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddMemoryCache();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromDays(1);
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.Path = "/";
+});
+
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
-ApiExtentions.AddApiAuthentication(builder.Services, opt);
+ApiExtensions.AddApiAuthentication(builder.Services, opt);
 builder.Services.AddWebEncoders();
 builder.Services.AddScoped<IUserService>(x =>
     new UserService(
-        x.GetService<IUserRepository>()));
+        x.GetRequiredService<IUserRepository>()));
 builder.Services.AddScoped<IProductService>(x =>
     new ProductService(
-        x.GetService<IProductRepository>()
-         )) ;
+        x.GetRequiredService<IProductRepository>()
+         ));
 
 builder.Services.AddScoped<IBrandService>(x =>
     new BrandService(
-        x.GetService<IBrandRepository>()
+        x.GetRequiredService<IBrandRepository>()
          ));
 
 builder.Services.AddScoped<ICategoryService>(x =>
     new CategoryService(
-        x.GetService<ICategoryRepository>(), 
-        x.GetService<ISubcategoryRepository>()));
-builder.Services.AddScoped<ISubcategoryService>(x => new SubcategoryService(x.GetService<ISubcategoryRepository>()));
-builder.Services.AddScoped<IAuthService>(x => 
+        x.GetRequiredService<ICategoryRepository>(),
+        x.GetRequiredService<ISubcategoryRepository>()));
+builder.Services.AddScoped<ICartService>(x =>
+    new CartService(
+            x.GetRequiredService<ICartRepository>(),
+            x.GetRequiredService<IProductRepository>(),
+            x.GetRequiredService<IProductService>()
+        ));
+builder.Services.AddScoped<ISubcategoryService>(x => new SubcategoryService(x.GetRequiredService<ISubcategoryRepository>()));
+builder.Services.AddScoped<IAuthService>(x =>
     new AuthService(
-        x.GetService<ITokenRepository>(),
-        x.GetService<IJwtProvider>(),
-        x.GetService<IUserRepository>(),
-        x.GetService<IPasswordHasher>()));
+        x.GetRequiredService<ITokenRepository>(),
+        x.GetRequiredService<IJwtProvider>(),
+        x.GetRequiredService<IUserRepository>(),
+        x.GetRequiredService<IPasswordHasher>()));
 
 builder.Services.AddScoped<IProductSpecificationRepository>(x =>
-    new ProductSpecificationRepository(x.GetService<WebContext>(), x.GetService<ISpecificationRepository>()));
-builder.Services.AddScoped<ICategoryRepository>(x => new CategoryRepository(x.GetService<WebContext>()));
+    new ProductSpecificationRepository(x.GetRequiredService<WebContext>(), x.GetRequiredService<ISpecificationRepository>()));
+builder.Services.AddScoped<ICategoryRepository>(x => new CategoryRepository(x.GetRequiredService<WebContext>()));
 
-builder.Services.AddScoped<IProductRepository>(x => new ProductRepository(x.GetService<WebContext>(),
-    x.GetService<ICategoryRepository>(),
-    x.GetService<ISpecificationRepository>(),
-    x.GetService<IBrandRepository>(),
-    x.GetService<IProductSpecificationRepository>(),
-    x.GetService<ISubcategoryRepository>()));
+builder.Services.AddScoped<IProductRepository>(x => new ProductRepository(x.GetRequiredService<WebContext>(),
+    x.GetRequiredService<ICategoryRepository>(),
+    x.GetRequiredService<ISpecificationRepository>(),
+    x.GetRequiredService<IBrandRepository>(),
+    x.GetRequiredService<IProductSpecificationRepository>(),
+    x.GetRequiredService<ISubcategoryRepository>()));
 
-builder.Services.AddScoped<ISubcategoryRepository>(x => new SubcategoryRepository(x.GetService<WebContext>(), x.GetService<ICategoryRepository>()));
-builder.Services.AddScoped<ISpecificationRepository>(x => new SpecificationRepository(x.GetService<WebContext>()));
-builder.Services.AddScoped<IUserRepository>(x => new UserRepository(x.GetService<WebContext>()));
-builder.Services.AddScoped<ITokenRepository>(x => new TokenRepository(x.GetService<WebContext>(), x.GetService<IUserRepository>()));
-builder.Services.AddScoped<IBrandRepository>(x => new BrandRepository(x.GetService<WebContext>(), x.GetService<ICategoryRepository>()));
+builder.Services.AddScoped<ISubcategoryRepository>(x => new SubcategoryRepository(x.GetRequiredService<WebContext>(), x.GetRequiredService<ICategoryRepository>()));
+builder.Services.AddScoped<ISpecificationRepository>(x => new SpecificationRepository(x.GetRequiredService<WebContext>()));
+builder.Services.AddScoped<IUserRepository>(x => new UserRepository(x.GetRequiredService<WebContext>()));
+builder.Services.AddScoped<ITokenRepository>(x => new TokenRepository(x.GetRequiredService<WebContext>(), x.GetRequiredService<IUserRepository>()));
+builder.Services.AddScoped<IBrandRepository>(x => new BrandRepository(x.GetRequiredService<WebContext>(), x.GetRequiredService<ICategoryRepository>()));
+builder.Services.AddScoped<ICartRepository>(x => new CartRepository(x.GetRequiredService<WebContext>(), x.GetRequiredService<IProductRepository>()));
 
 var app = builder.Build();
-SeedData.Seed(app);
+await SeedData.Seed(app);
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -134,8 +156,9 @@ app.UseCors(builder => builder.WithOrigins("https://localhost:5173", "https://lo
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();   
+    app.UseSwagger();
     app.UseSwaggerUI();
+    app.ApplyMigrations();
     IdentityModelEventSource.ShowPII = true;
 }
 
@@ -146,15 +169,14 @@ app.UseHttpsRedirection();
 app.UseCookiePolicy(new CookiePolicyOptions
 {
     MinimumSameSitePolicy = SameSiteMode.Strict,
-    Secure = CookieSecurePolicy.None,
+    Secure = CookieSecurePolicy.Always,
     HttpOnly = HttpOnlyPolicy.Always
 });
 
-app.UseMiddleware<AuthMiddleware>();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseSession();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");

@@ -5,10 +5,10 @@ import MyInput from "../components/UI/input/MyInput";
 import MySelect from "../components/UI/select/MySelect";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
-import { Context } from "../main";
 import MyButton from "../components/UI/button/MyButton";
 import ProductService from "../services/ProductService";
 import classes from '../styles/AddProductPage.module.css'
+import { Context } from "../main";
 
 function AddProductPage() {
 

@@ -9,17 +9,27 @@ import SubcategoryIdPage from "../pages/SubcategoryIdPage";
 import AdminPage from "../pages/AdminPage";
 import AddProductPage from "../pages/AddProductPage";
 import UpdateProductPage from "../pages/UpdateProductPage";
+import CartPage from "../pages/CartPage";
+import NoAccess from "../components/NoAccess";
 
-export const routes = [
+export const publicRoutes = [
     { id: 1, path: "/", component: Home },
     { id: 2, path: "/catalog", component: Catalog },
     { id: 3, path: "/catalog/:id", component: CatalogIdPage },
     { id: 4, path: "/login", component: Login },
     { id: 5, path: "/registration", component: Register },
-    { id: 6, path: "/profile", component: MyProfile },
-    { id: 7, path: "/product/:id", component: ProductIdPage },
-    { id: 8, path: "/subcategory/:id", component: SubcategoryIdPage },
-    { id: 9, path: "/admin", component: AdminPage },
-    { id: 10, path: "/addProduct", component: AddProductPage },
-    { id: 11, path: "/updateProduct/:id", component: UpdateProductPage }
+    { id: 6, path: "/product/:id", component: ProductIdPage },
+    { id: 7, path: "/subcategory/:id", component: SubcategoryIdPage },
+    { id: 8, path: "/noAccess", component: NoAccess },
+    { id: 9, path: "/cart", component: CartPage },
+]
+
+export const privateRoutes = [
+    { id: 9, path: "/profile", component: MyProfile },
+]
+
+export const adminRoutes = [
+    { id: 10, path: "/admin", component: AdminPage },
+    { id: 11, path: "/addProduct", component: AddProductPage },
+    { id: 12, path: "/updateProduct/:id", component: UpdateProductPage },
 ]

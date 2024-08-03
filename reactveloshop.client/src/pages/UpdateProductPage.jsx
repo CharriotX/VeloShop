@@ -3,13 +3,13 @@ import { useContext, useEffect, useState } from "react";
 import classes from "../styles/SubcategoriesList.module.css"
 import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx';
-import { Context } from "../main";
 import { observer } from "mobx-react-lite";
 import MySelect from "../components/UI/select/MySelect";
 import MyInput from "../components/UI/input/MyInput";
 import MyButton from "../components/UI/button/MyButton";
 import { useFetching } from "../hooks/useFetching";
 import ProductService from "../services/ProductService";
+import { Context } from "../main";
 
 function UpdateProductPage() {
     const params = useParams();

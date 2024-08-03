@@ -1,6 +1,5 @@
 ﻿/* eslint-disable react/prop-types */
 import ProductService from '../../../services/ProductService';
-import classes from '../button/MyButton.module.css'
 import MyButton from './MyButton';
 
 const DeleteProductButton = ({ id, setVisible }) => {
@@ -12,10 +11,10 @@ const DeleteProductButton = ({ id, setVisible }) => {
 
     return (
         <>
-            <div>
+            <div style={{ marginBottom: 10 }}>
                 Удалить продукт id ={id}?
             </div>
-            <div>
+            <div style={{ display: "flex"}}>
                 <MyButton onClick={() => handleDelete(id)}>Да</MyButton>
                 <MyButton onClick={() => setVisible(false)}>Нет</MyButton>
             </div>

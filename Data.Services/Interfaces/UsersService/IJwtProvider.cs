@@ -7,6 +7,6 @@ namespace Data.Services.Interfaces.UsersService
     public interface IJwtProvider
     {
         TokensData GenerateTokens(UserData data);
-        ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+        ClaimsPrincipal GetTokenPrincipal(string token);
     }
 }

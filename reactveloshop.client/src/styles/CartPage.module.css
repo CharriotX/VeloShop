@@ -1,0 +1,30 @@
+.table {
+    width: 100%;
+    margin-top: 30px;
+    border-collapse: collapse;
+}
+
+.tableRow {
+    max-height: 30px;
+    text-align: center;
+    border: 1px solid #0094ff;
+}
+
+    .tableRow td {
+        border: 1px solid #0094ff;
+        padding: 8px;
+    }
+
+.headerTableCell {
+    border: 1px solid #0094ff;
+    text-align: center;
+    padding: 8px;
+}
+
+.totalPrice{
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    margin-top: 20px;
+    
+}

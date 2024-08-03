@@ -1,29 +1,26 @@
-import { createContext } from 'react'
+import { StrictMode, createContext } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import Store from './store/store.js'
+import AuthStore from './store/AuthStore.js'
 import ProductDataStore from './store/ProductDataStore.js'
 import CreateBrandStore from './store/CreateBrandStore.jsx'
-import AdminStore from './store/AdminStore.jsx'
-import ProductStore from './store/ProductStore.js'
+import CartStore from './store/CartStore.jsx'
 
-const store = new Store();
+
+const authStore = new AuthStore();
 const productDataStore = new ProductDataStore();
 const createBrandStore = new CreateBrandStore();
-const adminStore = new AdminStore();
-const productStore = new ProductStore();
+const cartStore = new CartStore();
 
 export const Context = createContext({
-    store,
-    productStore,
+    authStore,
     productDataStore,
     createBrandStore,
-    adminStore
+    cartStore
 })
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <Context.Provider value={{ store, productDataStore, createBrandStore, adminStore, productStore }}>
+    <Context.Provider value={{ authStore, productDataStore, createBrandStore, cartStore }}>
         <App />
     </Context.Provider>
-
 )

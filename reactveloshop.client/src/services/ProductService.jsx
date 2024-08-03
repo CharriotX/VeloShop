@@ -1,4 +1,3 @@
-import $api from "../http/index";
 import axios from "axios";
 const baseProductUrl = 'https://localhost:7245/api/product/';
 
@@ -25,42 +24,53 @@ export default class ProductService {
         return response;
     }
 
-    static async getAllProductsByCategory(id, page) {
-        const response = await axios.get(baseProductUrl + "category/" + id, {
+    static async getProductsByCategory(id, searchTerm, searchColumn, order, page, pageSize) {
+        const response = await axios.get(`${baseProductUrl}category/${id}`, {
             params: {
-                pageNumber: page
+                searchTerm: searchTerm,
+                searchColumn: searchColumn,
+                sortOrder: order,
+                page: page,
+                pageSize: pageSize
             }
-        });
-        console.log(response)
+        })
         return response;
     }
 
-    static async getAllProductsBySubcategory(id, page) {
-        const response = await axios.get(baseProductUrl + "subcategory/" + id, {
+    static async getProductsBySubcategory(id, searchTerm, searchColumn, order, page, pageSize) {
+        const response = await axios.get(`${baseProductUrl}subcategory/${id}`, {
             params: {
-                pageNumber: page
+                searchTerm: searchTerm,
+                searchColumn: searchColumn,
+                sortOrder: order,
+                page: page,
+                pageSize: pageSize
             }
-        });
-
+        })
         return response;
     }
 
-    static async getProductsByCategory(id) {
-        const response = await axios.get(`${baseProductUrl}/category/${id}`)
-        console.log(response);
+    static async getProductsByBikeCategory(searchTerm, searchColumn, searchBrand, order, page, pageSize) {
+        const response = await axios.get(`${baseProductUrl}bikeCategory`, {
+            params: {
+                searchTerm: searchTerm,
+                searchColumn: searchColumn,
+                searchBrand: searchBrand,
+                sortOrder: order,
+                page: page,
+                pageSize: pageSize
+            }
+        })
         return response;
     }
 
     static async createProduct(data) {
         try {
-            console.log(data)
-            const response = await axios.post('https://localhost:7245/api/product/', JSON.stringify(data), {
+            await axios.post('https://localhost:7245/api/product/', JSON.stringify(data), {
                 headers: {
                     "Content-Type": "application/json"
                 }
             });
-
-            console.log(response)
         } catch (e) {
             console.log(e)
         }

@@ -9,6 +9,7 @@ using Data.Interface.Models;
 using Data.Interface.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Data.Sql.Repositories
 {
@@ -77,6 +78,71 @@ namespace Data.Sql.Repositories
             };
         }
 
+        public async Task<PagedList<ProductData>> GetByBikeCategory(ProductQueryObject query)
+        {
+            var bikeCategory = await _categoryRepository.GetByName("Велосипеды");
+
+            IQueryable<Product> productQuery = _dbSet
+                .Where(x => x.IsActive)
+                .Include(x => x.Subcategory)
+                .Include(x => x.Category)
+                .Include(x => x.Brand)
+                .Where(x => x.Category == bikeCategory);
+
+
+            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            {
+                productQuery = productQuery.Where(p => p.Name.Contains(query.SearchTerm));
+            }
+            if (!string.IsNullOrWhiteSpace(query.SearchBrand))
+            {
+                productQuery = productQuery.Where(p => p.Brand.Name.Contains(query.SearchBrand));
+            }
+
+            if (query.SortOrder.ToLower() == "desc")
+            {
+                productQuery = productQuery.OrderByDescending(GetSortedProperty(query));
+            }
+            else
+            {
+                productQuery = productQuery.OrderBy(GetSortedProperty(query));
+            }
+
+            var productsData = await productQuery
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(x => new ProductData
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Price = x.Price,
+                    Brand = new BrandData
+                    {
+                        Id = x.Brand.Id,
+                        Name = x.Brand.Name,
+                    },
+                    Category = new CategoryData
+                    {
+                        Id = x.Category.Id,
+                        Name = x.Category.Name,
+                    },
+                    Subcategory = new SubcategoryData
+                    {
+                        Id = x.Subcategory.Id,
+                        Name = x.Subcategory.Name,
+                    }
+                }).ToListAsync();
+
+            return new PagedList<ProductData>
+            {
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize,
+                TotalRecords = productQuery.Count(),
+                TotalPages = (int)Math.Ceiling((decimal)productQuery.Count() / (decimal)query.PageSize),
+                Items = productsData
+            };
+        }
+
         public async Task<ProductData> GetProductData(int id)
         {
             var product = await _dbSet
@@ -116,40 +182,6 @@ namespace Data.Sql.Repositories
             };
         }
 
-        public async Task<List<ProductData>> GetProductsBySubcategory(int subcategoryId)
-        {
-            var products = await _dbSet.Include(x => x.Specifications)
-                .Include(x => x.Category)
-                .Include(x => x.Subcategory)
-                .Include(x => x.Brand)
-                .Where(x => x.Subcategory.Id == subcategoryId)
-                .ToListAsync();
-            var productsData = products.Select(x => new ProductData
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Description = x.Description,
-                Price = x.Price,
-                Brand = new BrandData
-                {
-                    Id = x.Brand.Id,
-                    Name = x.Brand.Name
-                },
-                Category = new CategoryData
-                {
-                    Id = x.Category.Id,
-                    Name = x.Category.Name,
-                },
-                Subcategory = new SubcategoryData
-                {
-                    Id = x.Subcategory.Id,
-                    Name = x.Subcategory.Name,
-                }
-            }).ToList();
-
-            return productsData;
-        }
-
         public async Task<List<ProductData>> GetAllProductsByCategory(int categoryId)
         {
             var category = await _categoryRepository.Get(categoryId);
@@ -187,25 +219,26 @@ namespace Data.Sql.Repositories
             return productsData;
         }
 
-        public async Task<PageResponse<CategoryIdPageResponse>> GetProductsByCategoryWithPagination(int categoryId, int pageNumber, int pageSize)
+        public async Task<PageResponse<CategoryIdPageResponse>> GetProductsByCategory(int categoryId, ProductQueryObject queryObject)
         {
             var totalRecords = await _dbSet.Where(x => x.Category.Id == categoryId).CountAsync();
-            var products = await _dbSet
+
+            IQueryable<Product> productQuery = _dbSet
                 .Where(x => x.IsActive)
                 .Include(x => x.Subcategory)
                 .Include(x => x.Category)
                 .Include(x => x.Brand)
-                .Where(x => x.Category.Id == categoryId)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+                .Where(x => x.Category.Id == categoryId);
 
+            var filteredAndSortedProducts = GetFilteredProperty(productQuery, queryObject)
+                .Skip((queryObject.PageNumber - 1) * queryObject.PageSize)
+                .Take(queryObject.PageSize);
 
             var categoryWithSubcategories = await _categoryRepository.GetAllSubcategoriesOfTheCategory(categoryId);
 
             var data = new CategoryIdPageResponse
             {
-                Products = products.Select(x => new ProductData
+                Products = filteredAndSortedProducts.Select(x => new ProductData
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -241,32 +274,33 @@ namespace Data.Sql.Repositories
 
             return new PageResponse<CategoryIdPageResponse>
             {
-                PageNumber = pageNumber,
-                PageSize = pageSize,
+                PageNumber = queryObject.PageNumber,
+                PageSize = queryObject.PageSize,
                 TotalRecords = totalRecords,
-                TotalPages = (int)Math.Ceiling((decimal)totalRecords / (decimal)pageSize),
+                TotalPages = (int)Math.Ceiling((decimal)totalRecords / (decimal)queryObject.PageSize),
                 Data = data
             };
         }
 
-        public async Task<PageResponse<SubcategoryIdPagePesponse>> GetProductsBySubcategoryWithPagination(int subcategoryId, int pageNumber, int pageSize)
+        public async Task<PageResponse<SubcategoryIdPagePesponse>> GetProductsBySubcategory(int subcategoryId, ProductQueryObject queryObject)
         {
             var totalRecords = await _dbSet.AsNoTracking().Where(x => x.Subcategory.Id == subcategoryId).CountAsync();
-            var products = await _dbSet
-                .Where(x => x.IsActive)
-                .Include(x => x.Specifications)
-                .Include(x => x.Category)
-                .Include(x => x.Subcategory)
-                .Where(x => x.Subcategory.Id == subcategoryId)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            IQueryable<Product> productQuery = _dbSet
+                 .Where(x => x.IsActive)
+                 .Include(x => x.Subcategory)
+                 .Include(x => x.Category)
+                 .Include(x => x.Brand)
+                 .Where(x => x.Subcategory.Id == subcategoryId);
+
+            var filteredAndSortedProducts = GetFilteredProperty(productQuery, queryObject)
+                .Skip((queryObject.PageNumber - 1) * queryObject.PageSize)
+                .Take(queryObject.PageSize);
 
             var subcategoryData = await _subcategoryRepository.GetSubcategoryData(subcategoryId);
 
             var data = new SubcategoryIdPagePesponse
             {
-                Products = products.Select(x => new ProductData
+                Products = filteredAndSortedProducts.Select(x => new ProductData
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -297,10 +331,10 @@ namespace Data.Sql.Repositories
 
             return new PageResponse<SubcategoryIdPagePesponse>
             {
-                PageNumber = pageNumber,
-                PageSize = pageSize,
+                PageNumber = queryObject.PageNumber,
+                PageSize = queryObject.PageSize,
                 TotalRecords = totalRecords,
-                TotalPages = (int)Math.Ceiling((decimal)totalRecords / (decimal)pageSize),
+                TotalPages = (int)Math.Ceiling((decimal)totalRecords / (decimal)queryObject.PageSize),
                 Data = data
             };
 
@@ -400,6 +434,29 @@ namespace Data.Sql.Repositories
                 "name" => product => product.Name,
                 _ => product => product.Id,
             };
+        }
+
+        private IQueryable<Product> GetFilteredProperty(IQueryable<Product> productQuery, ProductQueryObject queryObject)
+        {
+            if (!string.IsNullOrWhiteSpace(queryObject.SearchTerm))
+            {
+                productQuery = productQuery.Where(p => p.Name.Contains(queryObject.SearchTerm));
+            }
+            if (!string.IsNullOrWhiteSpace(queryObject.SearchBrand))
+            {
+                productQuery = productQuery.Where(p => p.Brand.Name.Contains(queryObject.SearchBrand));
+            }
+
+            if (queryObject.SortOrder.ToLower() == "desc")
+            {
+                productQuery = productQuery.OrderByDescending(GetSortedProperty(queryObject));
+            }
+            else
+            {
+                productQuery = productQuery.OrderBy(GetSortedProperty(queryObject));
+            }
+
+            return productQuery;
         }
     }
 }

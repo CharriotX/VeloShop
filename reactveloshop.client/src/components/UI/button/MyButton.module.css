@@ -5,6 +5,8 @@
     background: indigo;
     border: 1px solid indigo;
     cursor: pointer;
-    width: 130px; 
-    height: 35px
+    width: 130px;
+    height: 35px;
+    display: flex;
+    justify-content: center
 }

@@ -39,7 +39,7 @@ namespace ReactVeloShop.Server.Controllers.Api
                 return BadRequest();
             }
 
-            _authService.Register(data);
+            await _authService.Register(data);
 
             return Ok();
         }
@@ -83,15 +83,15 @@ namespace ReactVeloShop.Server.Controllers.Api
         [HttpPost]
         [Route("refresh")]
         public async Task<ActionResult> RefreshToken(AccessTokenData accessTokenData)
-        {
+         {
             var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["refresh"];
 
-            if(refreshToken == null)
+            if (refreshToken == null)
             {
                 return Unauthorized();
             }
 
-            var principal = _jwtProvider.GetPrincipalFromExpiredToken(accessTokenData.AccessToken);
+            var principal = _jwtProvider.GetTokenPrincipal(accessTokenData.AccessToken);
             var username = principal.Identity?.Name;
 
             var newTokens = await _authService.UpdateRefreshToken(username, refreshToken);
@@ -100,7 +100,7 @@ namespace ReactVeloShop.Server.Controllers.Api
             {
                 return Unauthorized();
             }
-
+            
             _httpContextAccessor.HttpContext.Response.Cookies.Delete("refresh");
             _httpContextAccessor.HttpContext.Response.Cookies.Append("refresh", newTokens.RefreshToken, new CookieOptions
             {
@@ -115,14 +115,23 @@ namespace ReactVeloShop.Server.Controllers.Api
         [HttpGet]
         [Route("profile")]
         [Authorize]
-        public ActionResult Profile()
+        public async Task<ActionResult> Profile(AccessTokenData accessTokenData)
         {
-            var userData = (CurrentUserData)_httpContextAccessor.HttpContext.Items["UserData"];
+            var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["refresh"];
 
-            if (userData == null)
+            if (refreshToken == null)
             {
-                return NotFound("User not fount");
+                return Unauthorized();
             }
+
+            var principal = _jwtProvider.GetTokenPrincipal(accessTokenData.AccessToken);
+
+            if (principal == null)
+            {
+                return Unauthorized();
+            }
+
+            var userData = await _userService.GetUserByUsername(principal.Identity.Name);
 
             return Ok(userData);
         }

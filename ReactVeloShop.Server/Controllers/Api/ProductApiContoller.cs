@@ -16,7 +16,7 @@ namespace ReactVeloShop.Server.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAll(string? searchTerm, string? searchColumn = "id", string? sortOrder = "asc", int page = 2, int pageSize = 10)
+        public async Task<ActionResult> GetAll(string? searchTerm, string? searchColumn = "id", string? sortOrder = "asc", int page = 1, int pageSize = 10)
         {
             var query = new ProductQueryObject
             {
@@ -39,16 +39,51 @@ namespace ReactVeloShop.Server.Controllers.Api
         }
 
         [HttpGet("category/{categoryId}")]
-        public async Task<ActionResult> GetAllProductsByCategoryWithPagination(int categoryId, int pageNumber = 1, int pageSize = 5)
+        public async Task<ActionResult> GetAllProductsByCategoryWithPagination(int categoryId, string? searchTerm, string searchColumn, string? sortOrder = "asc", int page = 1, int pageSize = 5)
         {
-            var products = await _productService.GetProductDataByCategoryWithPagination(categoryId, pageNumber, pageSize);
+            var query = new ProductQueryObject
+            {
+                SearchTerm = searchTerm,
+                SortColumn = searchColumn,
+                SortOrder = sortOrder,
+                PageNumber = page,
+                PageSize = pageSize
+            };
+
+            var products = await _productService.GetProductDataByCategory(categoryId, query);
             return Ok(products);
         }
 
         [HttpGet("subcategory/{subcategoryId}")]
-        public async Task<ActionResult> GetAllProductsBySubcategory(int subcategoryId, int pageNumber = 1, int pageSize = 5)
+        public async Task<ActionResult> GetAllProductsBySubcategory(int subcategoryId, string? searchTerm, string searchColumn, string? sortOrder = "asc", int page = 1, int pageSize = 5)
         {
-            var products = await _productService.GetProductDataBySubcategoryWithPagination(subcategoryId, pageNumber, pageSize);
+            var query = new ProductQueryObject
+            {
+                SearchTerm = searchTerm,
+                SortColumn = searchColumn,
+                SortOrder = sortOrder,
+                PageNumber = page,
+                PageSize = pageSize
+            };
+
+            var products = await _productService.GetProductDataBySubcategory(subcategoryId, query);
+            return Ok(products);
+        }
+
+        [HttpGet("bikeCategory")]
+        public async Task<ActionResult> GetProductsByBikeCategory(string? searchTerm, string searchColumn, string? searchBrand, string? sortOrder = "asc", int page = 1, int pageSize = 5)
+        {
+            var query = new ProductQueryObject
+            {
+                SearchTerm = searchTerm,
+                SearchBrand = searchBrand,
+                SortColumn = searchColumn,
+                SortOrder = sortOrder,
+                PageNumber = page,
+                PageSize = pageSize
+            };
+
+            var products = await _productService.GetByBikeGategory(query);
             return Ok(products);
         }
 

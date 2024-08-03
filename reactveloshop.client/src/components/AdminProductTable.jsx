@@ -57,7 +57,7 @@ const AdminProductTable = () => {
         let div = event.target.closest('div');
         setProductId(div.id)
     }
-    console.log(productId)
+
     return (
         <>
             <MyInput
@@ -74,11 +74,11 @@ const AdminProductTable = () => {
                     {products.map(product =>
                         <tr className={classes.tableRow} key={product.id}>
                             <td width="50">{product.id}</td>
-                            <td>{product.name}</td>
-                            <td>{product.brandName}</td>
-                            <td>{product.subcategoryName}</td>
-                            <td>{product.price}</td>
-                            <td className={classes.actionButtons}>
+                            <td width="300">{product.name}</td>
+                            <td width="100">{product.brandName}</td>
+                            <td width="250">{product.subcategoryName}</td>
+                            <td width="80">{product.price}</td>
+                            <td width="160" className={classes.actionButtons}>
                                 <div id={product.id}>
                                     <Link to={`/updateProduct/${product.id}`}>
                                         <MyButton onClick={(e) => handleUpdate(e)}>

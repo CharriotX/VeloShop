@@ -1,7 +1,5 @@
 ﻿/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
-import React from 'react';
-import classes from '../table/Table.module.css'
 import TableHeadCell from './TableHeadCell';
 
 const TableHeader = ({ columns, sorting, sortTable }) => {

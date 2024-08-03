@@ -1,0 +1,25 @@
+.container {
+    background: none;
+    display: flex;
+    border: none;
+    cursor: pointer;
+    align-items: center;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    width: 30px;
+}
+
+
+.shoppingCart {
+   height: 20px;
+   margin-right: 5px;
+}
+
+.productsCount {
+    z-index: 1;
+    width: 30px;
+    font-size: 18px;
+    top: 38px;
+    color: white;
+}
+
