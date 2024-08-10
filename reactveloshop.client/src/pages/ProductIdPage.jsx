@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useContext, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFetching } from '../hooks/useFetching';
 import ProductService from '../services/ProductService';
@@ -6,9 +6,11 @@ import { useEffect } from 'react';
 import classes from "../styles/ProductIdPage.module.css"
 import noPhotoImage from "../accets/defaultProductImage.png"
 import MyButton from "../components/UI/button/MyButton";
+import { Context } from '../main';
 
 function ProductIdPage() {
     const params = useParams();
+    const { cartStore } = useContext(Context)
 
     const [product, setProduct] = useState({});
 
@@ -21,6 +23,10 @@ function ProductIdPage() {
     useEffect(() => {
         fetchProduct(params.id)
     }, [params])
+
+    const addProduct = (id) => {
+        cartStore.addProductToCart(id)
+    }
 
     return (
         <div className={classes.productContainer}>
@@ -36,7 +42,7 @@ function ProductIdPage() {
                         {product.price} руб.
                     </div>
                     <div>
-                        <MyButton>В корзину</MyButton>
+                        <MyButton onClick={() => addProduct(product.id)}>В корзину</MyButton>
                     </div>
                 </div>
             </div>

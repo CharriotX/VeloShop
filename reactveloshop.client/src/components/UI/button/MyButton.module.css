@@ -8,5 +8,6 @@
     width: 130px;
     height: 35px;
     display: flex;
-    justify-content: center
+    justify-content: center;
+    align-items:center;
 }

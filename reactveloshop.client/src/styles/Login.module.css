@@ -33,3 +33,13 @@
 .registerRedirect a{
     color: blue;
 }
+
+.loginInfo{
+    margin-left: 50px;
+    opacity: 0.1;
+    height: 50px;
+}
+
+.loginInfo:hover {
+    opacity: 0.6;
+}

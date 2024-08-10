@@ -8,7 +8,7 @@ export default class AuthStore {
     isLoading = true;
     isAuth = false;
     isAdmin = false;
-
+    
     constructor() {
         makeAutoObservable(this)
     }
@@ -61,7 +61,7 @@ export default class AuthStore {
             await AuthService.logout();
             localStorage.removeItem("token");
             this.setAuth(false);
-            this.setUser({});
+            this.setUser({ username: "", email: "", role: "" });
             this.setIsAdmin(false)
         } catch (e) {
             console.log(e)

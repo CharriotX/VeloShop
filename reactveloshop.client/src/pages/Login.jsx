@@ -45,6 +45,10 @@ function Login() {
                     Еще нет аккаунта? <Link to="/registration">Перейти к регистрации.</Link>
                 </div>
             </div>
+            <div className={classes.loginInfo}>
+                <div>For user - mail: user1@mail.ru pass: user</div>
+                <div>For admin - mail: admin@mail.ru pass: admin</div>
+            </div>
         </div>
     );
 }
